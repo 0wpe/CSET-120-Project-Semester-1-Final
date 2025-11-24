@@ -3,11 +3,10 @@
  * Represents each account in the system.
  *****************************************************/
 class User {
-    constructor(username, password, hint) {
+    constructor(username, password, email) {
         this.username = username;       // Stores username
         this.password = password;       // Plain-text password (in real apps use hashing)
-        this.hint = hint;               // Password hint
-        this.votes = {};                // Tracks user's poll votes (unused in this UI)
+        this.email = email;               // Password email
     }
 
     // Check if input password matches stored password
@@ -31,6 +30,7 @@ class System {
      *************************************************/
     saveUsers() {
         localStorage.setItem("users", JSON.stringify(this.users));
+        localStorage.setItem("currentUser", JSON.stringify(this.currentUser));
     }
 
     /*************************************************
@@ -39,13 +39,12 @@ class System {
     loadUsers() {
         const saved = localStorage.getItem("users");
         if (!saved) return;
-
+        
         const arr = JSON.parse(saved);
 
         // Convert plain objects back into User class instances
         this.users = arr.map(u => {
-            const user = new User(u.username, u.password, u.hint);
-            user.votes = u.votes || {};
+            const user = new User(u.username, u.password, u.email);
             return user;
         });
     }
@@ -53,16 +52,17 @@ class System {
     /*************************************************
      * CREATE USER ACCOUNT
      *************************************************/
-    signUp(username, password, hint) {
+    signUp(username, password, email) {
         if (this.users.some(u => u.username === username)) {
             alert("Username already exists!");
             return false;
         }
 
-        const newUser = new User(username, password, hint);
+        const newUser = new User(username, password, email);
         this.users.push(newUser);
-        this.saveUsers();
         alert("Account created successfully!");
+        this.currentUser = newUser.username;
+        this.saveUsers();
         return true;
     }
 
@@ -70,8 +70,10 @@ class System {
      * LOGIN LOGIC
      *************************************************/
     logIn(username, password) {
-        const user = this.users.find(u => u.username === username);
-
+        const user = this.users.find(u => u.username === username); //this checks the username arrtribute and check if it's the same as the username entered in the html file
+        // console.log(user);
+        // User {username: username, password: password, email: email}
+        
         if (!user) {
             alert("User not found!");
             return false;
@@ -79,12 +81,14 @@ class System {
 
         if (user.checkPassword(password)) {
             this.currentUser = user;
+            this.saveUsers();
             alert(`Welcome, ${username}!`);
             return true;
         } else {
-            alert(`Incorrect password! Hint: ${user.hint}`);
+            alert(`Incorrect password! email: ${user.email}`);
             return false;
         }
+        
     }
 }
 
@@ -94,7 +98,9 @@ class System {
 
 // Load system
 const system = new System();
-system.loadUsers();
+system.loadUsers(); //initially be empty []
+console.log(system.users);
+
 
 /****************************************
  * FORM ELEMENT SELECTION
@@ -113,7 +119,7 @@ signInForm.addEventListener("submit", e => {
 
     if (system.logIn(username, password)) {
         console.log(`User ${username} logged in.`);
-        // Add routing if needed (go to dashboard page)
+        window.location.href = "index.html";
     }
 });
 
@@ -127,9 +133,9 @@ signUpForm.addEventListener("submit", e => {
     const email = signUpForm.querySelector("input[placeholder='Email']").value;
     const password = signUpForm.querySelector("input[placeholder='Password']").value;
 
-    // Email isn't used in the User class, so we can pass it as hint
     if (system.signUp(username, password, email)) {
         console.log(`User ${username} created.`);
+        window.location.href = "index.html";
     }
 });
 

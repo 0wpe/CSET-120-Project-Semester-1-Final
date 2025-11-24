@@ -1,0 +1,5 @@
+When making the shapping cart the each user will have a cart associated with them
+
+In addition the cart will be an array holding objects -> {item : itemName, quantity: number}
+
+when the purchase function happens the item in the cart get transfered into a orderHistory with an added attributes {status: completed / in action (1 minute timer)}
