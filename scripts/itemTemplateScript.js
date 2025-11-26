@@ -11,9 +11,9 @@ class MenuItem {
 // Example of what an item will look like
 
 const burger = new MenuItem({
-    image: "images/burger.png",
+    image: "burger.jpg",
     title: "burger",
-    description: "Juicy beef burger with fresh toppings.LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLll",
+    description: "Juicy beef burger with fresh toppings.",
     price: 8.99,
     ingredients:[
         {name: "Beef Patty", quantity: "150g"},
@@ -23,7 +23,7 @@ const burger = new MenuItem({
     ]
 });
 const pasta = new MenuItem({
-    image: "images/pasta.png",
+    image: "pasta.png",
     title: "pasta",
     description: "yumyum pasta",
     price: 50.00, //dont change "when" said 50 bucks for all prices
@@ -34,7 +34,7 @@ const pasta = new MenuItem({
     ]  
 });
  const chicken_alfredo = new MenuItem({
-    image: "images/chicken-alfredo.png",
+    image: "chicken-alfredo.png",
     title: "chicken alfredo",
     description: "yumyum chicken alfredo",
     price: 1.01,
@@ -46,7 +46,7 @@ const pasta = new MenuItem({
 });
 
 function renderItem(menuItem) {
-    document.getElementById("item-image").src = menuItem.image;
+    document.getElementById("item-image").src = "../assets/imgs/" + menuItem.image;
     document.getElementById("item-title").textContent = menuItem.title;
     document.getElementById("item-description").textContent = menuItem.description;
     document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;//price decimal
