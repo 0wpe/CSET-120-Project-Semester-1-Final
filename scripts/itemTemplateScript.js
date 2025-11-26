@@ -1,3 +1,53 @@
+// Load users
+const users = JSON.parse(localStorage.getItem("users")) || [];
+//this is an array of objects
+
+// Load current logged-in user
+const currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+
+// Example: Show current user's cart
+if (currentUser) {
+    console.log(`Logged in as: ${currentUser.username}`);
+    console.log("Cart items:", currentUser.cart);
+}
+
+function test() {
+    const params = new URLSearchParams(window.location.search);
+    const itemKey = params.get("item") || "burger";
+    const selectedItem = menuItems[itemKey];
+    console.log(selectedItem);
+    //selected 
+}
+
+// Example: Add an item to the cart from another file
+function addToCart() {
+    if (!currentUser) {
+        console.log("No user logged in.");
+        return;
+    }
+
+    // Prevent duplicate items
+    if (currentUser.cart.some(i => i.name === item.name)) {
+        console.log("Item already in cart!");
+        return;
+    }
+
+    currentUser.cart.push(item);
+
+    // Update localStorage
+    // Update the users array
+    const idx = users.findIndex(u => u.username === currentUser.username);
+    if (idx >= 0) {
+        users[idx] = currentUser;
+        localStorage.setItem("users", JSON.stringify(users));
+    }
+
+    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+
+    console.log(`${item.name} added to cart!`);
+}
+
+
 class MenuItem {
     constructor({image, title, description, price, ingredients = []}){
         this.image = image;               // URL for the image of the item
@@ -23,7 +73,7 @@ const burger = new MenuItem({
     ]
 });
 const pasta = new MenuItem({
-    image: "pasta.png",
+    image: "",//file name
     title: "pasta",
     description: "yumyum pasta",
     price: 50.00, //dont change "when" said 50 bucks for all prices
@@ -34,7 +84,7 @@ const pasta = new MenuItem({
     ]  
 });
  const chicken_alfredo = new MenuItem({
-    image: "chicken-alfredo.png",
+    image: "",
     title: "chicken alfredo",
     description: "yumyum chicken alfredo",
     price: 1.01,
@@ -47,6 +97,7 @@ const pasta = new MenuItem({
 
 function renderItem(menuItem) {
     document.getElementById("item-image").src = "../assets/imgs/" + menuItem.image;
+    console.log(menuItem.image);
     document.getElementById("item-title").textContent = menuItem.title;
     document.getElementById("item-description").textContent = menuItem.description;
     document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;//price decimal
@@ -80,4 +131,4 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // #881fc9 :Darker
 // #a81bff :Lighter
-// white :White
+// white :White 
