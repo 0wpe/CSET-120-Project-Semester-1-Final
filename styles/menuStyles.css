@@ -64,6 +64,7 @@ header{
     display: flex;
     justify-content: center;
     align-items: center;
+    border-bottom:10px solid black;
 }
 
 /* ---- MENU GRID ---- */
@@ -156,6 +157,38 @@ header{
     margin-bottom: 12px;
 }
 
+/* ----- CART / RECEIPT BOX ----- */
+.cart-box {
+    background: #fff;
+    border-radius: 25px;
+    padding: 15px;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cart-title {
+    font-size: 22px;
+    color: #881fc9;
+    margin-bottom: 12px;
+}
+
+/* ----- CART / RECEIPT BOX ----- */
+.cart-box {
+    background: #fff;
+    border-radius: 25px;
+    padding: 15px;
+    height: 100%;
+    overflow-y: auto;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.cart-title {
+    font-size: 22px;
+    color: #881fc9;
+    margin-bottom: 12px;
+}
+
 /* CART ROW LAYOUT */
 .cart-row {
     display: flex;
@@ -198,4 +231,14 @@ header{
 .receipt-totals div {
     font-size: 15px;
     margin: 4px 0;
+}
+
+/* Fixed cart when scrolling */
+.cart-fixed {
+    position: fixed;
+    top: 65%;
+    right: 25px; /* distance from viewport right */
+    transform: translateY(-50%);
+    width:17.35%;
+    z-index: 999;
 }

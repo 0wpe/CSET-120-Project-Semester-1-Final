@@ -83,7 +83,7 @@ body{
     position:absolute;
     left:-34.6px;
     bottom:-76%;
-    width:101.57%;
+    width:102.2%;
     height:55%;
 
     background-color:transparent;
@@ -125,7 +125,7 @@ body{
     width:1%;
     height:26%;
     background:transparent;
-    z-index:6;
+    /* z-index:6; */
     top:99%;
 }
 
@@ -141,19 +141,19 @@ body{
 .top-bar .corner-fill-right3{
     content:"";
     position:absolute;
-    width:0.5%;
+    width:1%;
     height:10%;
-    background:transparent;
-    z-index:6;
-    top:103%;
+    background:black;
+    /* z-index:5; */
+    top:99%;
 }
 
 .top-bar .corner-fill-left3{
-    left:-1%;
+    left:-1.2%;
 }
 
 .top-bar .corner-fill-right3{
-    right:-1%;
+    right:-1.2%;
 }
 
 .icon{
