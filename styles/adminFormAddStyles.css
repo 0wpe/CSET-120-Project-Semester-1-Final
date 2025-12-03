@@ -1,0 +1,120 @@
+/* Global reset & font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: white;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px;
+    color: #333;
+}
+
+/* FORM CONTAINER */
+form#itemForm {
+    width: 450px;
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    box-shadow: 0 6px 25px rgba(136, 31, 201, 0.25);
+    border: 2px solid rgba(168, 27, 255, 0.15);
+    transition: box-shadow 0.3s ease;
+}
+
+form#itemForm:hover {
+    box-shadow: 0 8px 35px rgba(136, 31, 201, 0.35);
+}
+
+/* INPUT FIELDS */
+#itemForm input[type="text"] {
+    width: 100%;
+    padding: 15px 18px;
+    margin-bottom: 20px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: 2px solid #e9e9e9;
+    outline: none;
+    transition: border 0.25s, box-shadow 0.25s;
+}
+
+#itemForm input[type="text"]:focus {
+    border-color: #a81bff;
+    box-shadow: 0 0 8px rgba(168, 27, 255, 0.4);
+}
+
+/* DROPZONE */
+#dropZone {
+    background: linear-gradient(135deg, #fdfaff, #f7ebff);
+    border: 3px dashed #881fc9;
+    border-radius: 18px;
+    color: #881fc9;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s, border-color 0.3s;
+    text-align: center;
+}
+
+#dropZone:hover {
+    background: #f1d9ff;
+    transform: scale(1.03);
+    border-color: #a81bff;
+}
+
+/* Small animation when file is dragged in */
+#dropZone.dragover {
+    background: #e1c6ff;
+    border-color: #a81bff;
+    transform: scale(1.05);
+}
+
+/* GALLERY PREVIEW */
+#gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+#gallery img {
+    width: 100%;
+    height: 110px;
+    object-fit: cover;
+    border-radius: 12px;
+    border: 2px solid #a81bff;
+    box-shadow: 0 4px 10px rgba(136, 31, 201, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#gallery img:hover {
+    transform: scale(1.07);
+    box-shadow: 0 6px 14px rgba(136, 31, 201, 0.35);
+}
+
+/* SUBMIT BUTTON */
+#formBtn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 14px;
+    font-size: 17px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #881fc9, #a81bff);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.25s, box-shadow 0.25s, opacity 0.2s;
+}
+
+#formBtn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 18px rgba(168, 27, 255, 0.45);
+}
+
+#formBtn:active {
+    transform: translateY(1px);
+    opacity: 0.85;
+}
