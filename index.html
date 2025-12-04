@@ -17,21 +17,27 @@
             <div class="icon"></div>
             <div class="menuTitle weddingday bubble-text">The Vineyard Tavern</div>
             <div class="menu-selector">
-                <button class="home btn shiny bubble-text">HOME</button>
-                <button class="menu btn shiny bubble-text">MENU</button>
-                <button class="special btn shiny bubble-text">SPECIALS</button>
-                <button class="about btn shiny bubble-text">ABOUT</button>
+                <button class="home btn bubble-text" onclick="window.location.href='index.html'">HOME</button>
+                <button class="menu btn bubble-text" onclick="window.location.href='about.html'">ABOUT</button>
+                <button class="special btn bubble-text" onclick="window.location.href='special.html'">SPECIALS</button>
+                <button class="about btn bubble-text" onclick="window.location.href='about.html'">LOGIN</button>
             </div>
             <div class="login/signup"></div>
         </div>
         <header>
             <div class="inner">
-                <h1 class="weddingday">The Vineyard Tavern is blah blah</h1>
+                <h1>Welcome to The Vineyard Tavern, </h1>
+                <br>
+              <p>Where we're renowned for crafting everything fresh from scratch. Using locally-sourced, seasonal ingredients and time-honored recipes, we create flavorful dishes that blend rustic charm with culinary excellence in every bite.</p>
             </div>
         </header>
         <div class="container">
             <div class="section-sides">
-                <div class="ad">Testing</div>
+                <div class="drink-app" id="drinkBox">
+                    <div class="drinkcontainer">hi
+                        <!-- HEREEEEEEEEEEEEEEEEEEEEEE -->
+                    </div>
+                </div>
             </div>
             <div class="section-middle">
                 <h1>Menu</h1>
@@ -53,21 +59,62 @@
             </div>
 
         </div>
-        <div class="container">
-            <h1 class="menu">Menu</h1>
-            <div class="specials"> <!-- List of Specials/Deals -->
+        <div class="footer">
+            <div class="footer-content">
+                <div class="footer-signup">
+                    <h2>Don't Miss Out</h2>
+                    <p>Sign up to recieve emails about new promotions and offers!!!</p>
+
+                    <div class="footer-form">
+                        <input type="email" placeholder="Enter Your Email Address">
+                        <input type="text" placeholder="MM/DD/YYYY" class="birthday">
+                        <button>SIGN UP</button>
+                    </div>
+
+                    <p class="footer-small">
+                        This site is intended for US consumers. By signing up, you understand and agree that your data
+                        will be collected and used subject to our US Privacy Policy and Terms of Use.<br>*Required Information
+                    </p>
+
+                    <div class="footer-socials">
+                        <i class="fab fa-instagram"></i>
+                        <i class="fab fa-facebook"></i>
+                        <i class="fab fa-twitter"></i>
+                        <i class="fab fa-tumblr"></i>
+                        <i class="fab fa-youtube"></i>
+                        <i class="fab fa-pinterest"></i>
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <div>
+                        <h4>COMPANY</h4>
+                        <a href="#">About</a>
+                        <a href="#"><ion-icon name="logo-facebook" id="facebook"></ion-icon></a>
+                    </div>
+                    <div>
+                        <h4>MORE TO EXPLORE</h4>
+                        <a href="#">Offers</a>
+                    </div>
+                    <div>
+                        <h4>CUSTOMER SERVICE</h4>
+                        <a href="#">Contact Us</a>
+                        <a href="#">Store Location</a>
+                        <a href="#">Redeem rewards</a>
+                    </div>
+                </div>
 
             </div>
-        </div>
-        <div class="container">
 
         </div>
+        
 
 
 
 
 
-
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
         <script src="scripts/menuScript.js"></script>
     </body>
 </html>

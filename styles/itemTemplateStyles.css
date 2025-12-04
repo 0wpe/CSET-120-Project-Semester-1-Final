@@ -107,5 +107,24 @@ body {
     background: #a81bff;
 }
 
+.ionIcon{
+    position: absolute;
+    top: 1vw;
+    right: 1%;
+}
+
+.icon {
+    font-size: 3.5em;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid transparent;
+    transition: ease-in-out 0.1s;
+}
+
+.icon:hover{
+    border: 2px solid #ffffff;
+}
+
 
 

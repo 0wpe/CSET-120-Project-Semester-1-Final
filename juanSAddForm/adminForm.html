@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Document</title>
+</head>
+<body>
+    <link rel="stylesheet" href="adminFormStyle.css">
+    <div >
+
+    </div>
+    <form action="" method="get" id="itemForm">
+        <input class="input" type="text" name="name" id="itemName" placeholder="Enter item name" required>
+        <input class="input" type="text" name="description" id="itemDescription" placeholder="Enter item description (Optional)" value="" width="">
+        <input class="input" type="text" name="price" id="itemPrice" placeholder="Enter item's price" required>
+        <div id="dropZone">
+            Drop image here
+        </div>
+        <!-- I'll hide the file input so I can add the data from the dropzone here
+        <input type="file" name="file" id="fileInput" style="height: 100px; width: fit-content;padding: 20px 40px; background-color: #aaa; display: none;" placeholder="Click to pick a file"> -->
+        <div id="gallery"></div>
+        <select name="foodType" id="itemType" required>
+            <option value="">Pick what type of food it is</option>
+            <option value="Appetizer">Appetizer</option>
+            <option value="Side">Side</option>
+            <option value="Main">Main</option>
+            <option value="Drink">Drink</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Kids Menu">Kids Menu</option>
+        </select>
+        <button type="submit" id="formBtn">Submit New Item</button>
+    </form>
+    <script src="script.js"></script>
+</body>
+</html>

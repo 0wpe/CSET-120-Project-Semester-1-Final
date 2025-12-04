@@ -1,0 +1,213 @@
+/* *:focus {
+    outline: none;
+} /*This will remove the black border when you touch the input box */
+
+/* universal css as always */
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    /* zoom: 1.1; */
+}
+
+body {
+    font-family: "Segoe UI", sans-serif;
+    background: #f5f7fb;
+    padding-top: 40px;
+}
+
+form {
+    background: white;
+    padding: 40px 60px;
+    max-width: 500px;
+    margin: auto;
+    border-radius: 18px;
+    box-shadow: 0 0 25px rgba(0, 0, 0, 0.08);
+}
+
+#formBtn {
+    margin-top: 20px;
+    margin-bottom: 30px; 
+    padding: 12px 20px;
+    width: 200px;
+    align-self: center;
+
+    background: #4A9DEC;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#formBtn:hover {
+    background: #368ad3;
+    transform: scale(1.03);
+}
+
+#gallery {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    justify-content: center; /* center children horizontally */
+    align-items: center;     /* center children vertically */
+    align-content: center;   /* center wrapped rows */
+}
+
+#gallery img {
+    box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+}
+
+
+#dropZone {
+    width: 320px;
+    height: 200px;
+    border: 3px dashed #b5b5b5;
+    background: #fafafa;
+    border-radius: 14px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    color: #666;
+    font-size: 1.1em;
+    font-weight: 500;
+    text-align: center;
+
+    transition: 0.3s ease;
+    margin: 20px auto;
+    cursor: pointer;
+}
+
+/* Hover + drag-over effects */
+#dropZone.dragover {
+    border-color: #4A9DEC;
+    background-color: #eaf4ff;
+    color: #2b76c3;
+    transform: scale(1.02);
+    box-shadow: 0 0 12px rgba(74, 157, 236, 0.25);
+}
+
+
+form{
+    display: flex;
+    flex-direction: column;
+    padding: 0 80px;
+}
+
+input{
+    display: block;
+    margin: 20px;
+    width: 280px;
+}
+
+.input {
+  border: 2px solid transparent;
+  height: 3em;
+  padding-left: 0.8em;
+  outline: none;
+  overflow: hidden;
+  background-color: #F3F3F3;
+  border-radius: 10px;
+  transition: all 0.5s;
+}
+
+.input:hover,
+.input:focus {
+  border: 2px solid #4A9DEC;
+  box-shadow: 0px 0px 0px 7px rgb(74, 157, 236, 20%);
+  background-color: white;
+}
+
+.deleteBtn {
+ appearance: button;
+ background-color: #1899D6;
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ box-sizing: border-box;
+ color: #FFFFFF;
+ cursor: pointer;
+ display: inline-block;
+ font-size: 15px;
+ font-weight: 700;
+ letter-spacing: .8px;
+ line-height: 20px;
+ margin: 0;
+ outline: none;
+ overflow: visible;
+ padding: 13px 19px;
+ text-align: center;
+ text-transform: uppercase;
+ touch-action: manipulation;
+ transform: translateZ(0);
+ transition: filter .2s;
+ user-select: none;
+ -webkit-user-select: none;
+ vertical-align: middle;
+ white-space: nowrap;
+}
+
+.deleteBtn:after {
+ background-clip: padding-box;
+ background-color: #1CB0F6;
+ border: solid transparent;
+ border-radius: 16px;
+ border-width: 0 0 4px;
+ bottom: -4px;
+ content: "";
+ left: 0;
+ position: absolute;
+ right: 0;
+ top: 0;
+ z-index: -1;
+}
+
+.deleteBtn:focus {
+ user-select: auto;
+}
+
+.deleteBtn:hover:not(:disabled) {
+ filter: brightness(1.1);
+}
+
+.deleteBtn:disabled {
+ cursor: auto;
+}
+
+.deleteBtn:active:after {
+ border-width: 0 0 0px;
+}
+
+.deleteBtn:active {
+ padding-bottom: 10px;
+}
+
+.flexContainer{
+    align-items: center;
+}
+
+.imgContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    margin: 15px 0;
+    padding: 10px;
+    width: fit-content;
+
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.imgContainer img {
+    display: block;
+    width: 150px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}

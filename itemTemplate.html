@@ -6,16 +6,28 @@
         <link rel="stylesheet" href ="styles/itemTemplateStyles.css">
     </head>
     <body>
+        <div id="leaveIcon" class="ionIcon" onclick="window.location.href = ''">
+            <a href="index.html">
+                <!-- icon -->
+                <ion-icon name="close" class="icon"></ion-icon>
+            </a>
+        </div>
+        
+        
         <div class="item-container">
             <img id="item-image" alt="Food image">
             <div style="min-width: 0;">
-                <h2 id="item-title"></h2>
+                <h2 id="item-name"></h2>
                 <p id="item-description"></p>
             </div>
             <span id="item-price"></span>
             <ul id="item-ingredients"></ul>
-            <button id="item-button">Add to cart</button>
+            <button id="item-button" onclick="addToCart()" value="burger">Add to cart</button>
         </div>
+
+        
         <script src="scripts/itemTemplateScript.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     </body>
 </html>
