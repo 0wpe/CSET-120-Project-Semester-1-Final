@@ -44,7 +44,7 @@ const specialsData = [
                 name: "Watermelon Smoothie",
                 description: "Fresh watermelon blended with mint and lime.",
                 price: "$4.99",
-                imageUrl: "../assets/imgs/watermelonSmoothie.jpg",
+                imageUrl: "assets/imgs/specialImgs/watermelonSmoothie.jpg",
                 tags: ["Fresh", "Mint", "Lime"]
             },
             {

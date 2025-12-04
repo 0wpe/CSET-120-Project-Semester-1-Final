@@ -1,109 +1,193 @@
-// Load users
-const users = JSON.parse(localStorage.getItem("users")) || [];
-//this is an array of objects
+// Updated version with keyText generation
 
-// Load current logged-in user
-const currentUser = JSON.parse(localStorage.getItem("currentUser")) || null;
+let db;
 
-// Example: Show current user's cart
-if (currentUser) {
-    console.log(`Logged in as: ${currentUser.username}`);
-    console.log("Cart items:", currentUser.cart);
-}
+function generateKeyText(title, existingKeys) {
+    // Split the title into words:
+    // "Parm Burger" → ["parm", "burger"]
+    // "pasta" → ["pasta"]
+    const parts = title.trim().toLowerCase().split(/\s+/);
 
-function test() {
-    const params = new URLSearchParams(window.location.search);
-    const itemKey = params.get("item") || "burger";
-    const selectedItem = menuItems[itemKey];
-    console.log(selectedItem);
-    //selected 
-}
+    // Build the base key:
+    // If there's only ONE word → use that word
+    // Example: "pasta" → "pasta"
+    //
+    // If there are TWO OR MORE words → use:
+    //   firstWord + firstLetterOfSecondWord
+    // Example: "Parm Burger" → "parmb"
+    const base = parts.length === 1 ? parts[0] : parts[0] + parts[1][0];
 
-// Example: Add an item to the cart from another file
-function addToCart() {
-    if (!currentUser) {
-        console.log("No user logged in.");
-        return;
+    // Start with the base key
+    let key = base;
+
+    // Counter used to create "parmb1", "parmb2", etc.
+    let counter = 1;
+
+    // If this key already exists inside "existingKeys" (a Set),
+    // then keep trying base + number until we find a unique one.
+    //
+    // Example:
+    // existingKeys = {"parmb"}
+    // Try "parmb"  → exists
+    // Try "parmb1" → does NOT exist → accept it
+    while (existingKeys.has(key)) {
+        key = base + counter;  // append increasing number
+        counter++;             // try the next number if needed
     }
 
-    // Prevent duplicate items
-    if (currentUser.cart.some(i => i.name === item.name)) {
-        console.log("Item already in cart!");
-        return;
-    }
-
-    currentUser.cart.push(item);
-
-    // Update localStorage
-    // Update the users array
-    const idx = users.findIndex(u => u.username === currentUser.username);
-    if (idx >= 0) {
-        users[idx] = currentUser;
-        localStorage.setItem("users", JSON.stringify(users));
-    }
-
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
-
-    console.log(`${item.name} added to cart!`);
+    // Return the unique keyText for this item
+    return key;
 }
 
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("StoreDB", 1);
+
+        request.onupgradeneeded = (event) => {
+            const upgradeDB = event.target.result;
+            console.log("Upgrading StoreDB…");
+
+            if (!upgradeDB.objectStoreNames.contains("users")) {
+                upgradeDB.createObjectStore("users", { keyPath: "userId", autoIncrement: true });
+            }
+            if (!upgradeDB.objectStoreNames.contains("currentUser")) {
+                upgradeDB.createObjectStore("currentUser", { keyPath: "id" });
+            }
+            if (!upgradeDB.objectStoreNames.contains("products")) {
+                upgradeDB.createObjectStore("products", { keyPath: "productId", autoIncrement: true });
+            }
+            if (!upgradeDB.objectStoreNames.contains("images")) {
+                upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            console.log("Database opened successfully");
+            resolve(db);
+        };
+
+        request.onerror = () => {
+            console.error("Database failed to open");
+            reject("Database error");
+        };
+    });
+}
+
+openDB().then(() => console.log("All done!"));
+
+function addToCart(product) {
+    const creation = new CartItem(product.title, product.image, product.price, product.keyText);
+
+    const tx = db.transaction(["currentUser"], "readwrite");
+    const store = tx.objectStore("currentUser");
+
+    const req = store.get(1);
+
+    req.onsuccess = () => {
+        const user = req.result;
+        if (!user) {
+            console.error("No current user found in DB.");
+            return;
+        }
+
+        if (!Array.isArray(user.cart)) user.cart = [];
+
+        const exists = user.cart.some(item => item.keyText === creation.keyText);
+
+        if (!exists) {
+            user.cart.push({
+                title: creation.title,
+                image: creation.image,
+                price: creation.price,
+                keyText: creation.keyText,
+                quantity: 1
+            });
+        } else {
+            const existingItem = user.cart.find(item => item.keyText === creation.keyText);
+            if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+                alert("Item quanitity increased, Item quantity: " + existingItem.quantity);
+            }
+        }
+
+        store.put(user);
+    };
+
+    req.onerror = () => console.error("Failed to retrieve user cart");
+}
 
 class MenuItem {
-    constructor({image, title, description, price, ingredients = []}){
-        this.image = image;               // URL for the image of the item
+    constructor({ image, title, description, price, ingredients = [], keyText }) {
+        this.image = image;
         this.title = title;
-        this.description = description;   // Description of the item
-        this.price = price;               // Price value of the item
-        this.ingredients = ingredients;   // Array of ingredient objects
+        this.description = description;
+        this.price = price;
+        this.ingredients = ingredients;
+        this.keyText = keyText;
     }
 }
 
-// Example of what an item will look like
+class CartItem {
+    constructor(title, image, price, keyText) {
+        this.title = title;
+        this.image = image;
+        this.price = price;
+        this.keyText = keyText
+    }
+}
 
-const burger = new MenuItem({
-    image: "burger.jpg",
-    title: "burger",
-    description: "Juicy beef burger with fresh toppings.",
-    price: 8.99,
-    ingredients:[
-        {name: "Beef Patty", quantity: "150g"},
-        {name: "Lettuce", quantity: "2 leaves"},
-        {name: "Cheddar Cheese", quantity: "1 slice"},
-        {name: "Bun", type: "sesame"}
-    ]
-});
-const pasta = new MenuItem({
-    image: "",//file name
-    title: "pasta",
-    description: "yumyum pasta",
-    price: 50.00, //dont change "when" said 50 bucks for all prices
-    ingredients:[
-        {name: "pasta", quantity: "150g"},
-        {name: "tomato", quantity: "2 slices"},
-        {name: "cheese", quantity: "1 slice"},
-    ]  
-});
- const chicken_alfredo = new MenuItem({
-    image: "",
-    title: "chicken alfredo",
-    description: "yumyum chicken alfredo",
-    price: 1.01,
-    ingredients:[
-        {name: "chicken", quantity: "150g"},
-        {name: "alfredo sauce", quantity: "500 oz"},
-        {name: "cheese", quantity: "3 slice"},
-    ]      
+// Build menu items with dynamic keyText
+const rawItems = [
+    { image: "../assets/imgs/burger.jpg", title: "burger", 
+        description: "Juicy beef burger with fresh toppings.", 
+        price: 8.99, 
+        ingredients: [
+        { name: "Beef Patty", quantity: "150g" },
+        { name: "Lettuce", quantity: "2 leaves" },
+        { name: "Cheddar Cheese", quantity: "1 slice" },
+        { name: "Bun", type: "sesame" }
+    ]},
+    { image: "", 
+        title: "pasta", 
+        description: "yumyum pasta", 
+        price: 50.00, 
+        ingredients: [
+        { name: "pasta", quantity: "150g" },
+        { name: "tomato", quantity: "2 slices" },
+        { name: "cheese", quantity: "1 slice" }
+    ]},
+    { image: "", 
+        title: "chicken alfredo", 
+        description: "yumyum chicken alfredo", 
+        price: 1.01, 
+        ingredients: [
+        { name: "chicken", quantity: "150g" },
+        { name: "alfredo sauce", quantity: "500 oz" },
+        { name: "cheese", quantity: "3 slice" }
+    ]}
+];
+
+const existingKeys = new Set();
+const menuItems = {};
+
+rawItems.forEach(item => {
+    const keyText = generateKeyText(item.title, existingKeys);
+    existingKeys.add(keyText);
+
+    const menuItem = new MenuItem({ ...item, keyText });
+    menuItems[keyText] = menuItem;
 });
 
 function renderItem(menuItem) {
-    document.getElementById("item-image").src = "../assets/imgs/" + menuItem.image;
-    console.log(menuItem.image);
+    document.getElementById("item-image").src = menuItem.image;
     document.getElementById("item-title").textContent = menuItem.title;
     document.getElementById("item-description").textContent = menuItem.description;
-    document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;//price decimal
+    document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;
 
     const ingredientsList = document.getElementById("item-ingredients");
-    ingredientsList.innerHTML = ""; // Clear existing
+    ingredientsList.innerHTML = "";
 
     menuItem.ingredients.forEach(ingredient => {
         const li = document.createElement("li");
@@ -113,22 +197,27 @@ function renderItem(menuItem) {
         ingredientsList.appendChild(li);
     });
 }
-const menuItems = {
-    burger,
-    pasta,
-    chicken_alfredo
-}
+
 document.addEventListener("DOMContentLoaded", () => {
-    const params = new URLSearchParams(window.location.search);
-    const itemKey = params.get("item") || "burger";
+    const btn = document.getElementById("item-button");
+    const itemKey = btn.value;
+
     const selectedItem = menuItems[itemKey];
+
     if (selectedItem) {
         renderItem(selectedItem);
-    }
-    else{
-        console.error("Item not found:",itemkey);
+        btn.addEventListener("click", () => {
+            const key = btn.value;
+            const product = menuItems[key];
+            if (!product) return console.error("ERROR: item undefined. Key=", key);
+            addToCart(product);
+        });
+    } else {
+        console.error("Item not found:", itemKey);
     }
 });
+
+// document.getElementById("item-button")
 // #881fc9 :Darker
 // #a81bff :Lighter
-// white :White 
+// white :White
