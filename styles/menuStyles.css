@@ -47,8 +47,13 @@ header{
     height:84vh;
     border-right:25px solid black;
     border-left:25px solid black;
+    overflow:scroll;
     /* background:rgb(250, 250, 250); */
     /* border-radius:30px; */
+}
+
+.section-sides::-webkit-scrollbar{
+    display: none;
 }
 
 .inner{
@@ -71,15 +76,60 @@ header{
     margin-top: 180px;
     margin-left: 100px;
     letter-spacing: 1.5px;
+    animation: slide-left 1s ease-in-out 0.3s forwards;
+    opacity: 0;
+}
+@keyframes slide-left {
+    from {
+        transform: translateX(-100%); /* Start from the right (off-screen) */
+        opacity: 1;
+    }
+    to {
+        transform: translateX(0); /* Slide to original position */
+        opacity: 1;
+    }
 }
 .inner p{
-    font-size: 24px;
+    font-size: 30px;
     line-height: 1.6;
-    max-width: 700px; 
+    max-width: 980px; 
     margin-left: 170px;
-     font-size: 30px;/* could change to 30 */
     letter-spacing: 1px;
-    
+    display: block;
+    overflow: hidden;
+    animation: typing 4s steps(100, end) forwards, blink-caret .75s step-end 6, hide-caret 0s forwards;
+    animation-iteration-count: 1;
+    white-space: nowrap;
+    border-right: 3px solid black;
+    opacity: 0;
+}
+.inner p:nth-child(3) {
+    animation-delay: 1s;
+    opacity: 0;
+}
+
+.inner p:nth-child(4) {
+    animation-delay: 3s;
+
+}
+
+.inner p:nth-child(5) {
+    animation-delay: 5s;
+}
+.inner p:nth-child(6){
+    animation-delay: 7.2s;
+}
+
+@keyframes typing {
+    from { width: 0; opacity: 1; }
+    to { width: 100%; opacity: 1; }
+}
+@keyframes blink-caret {
+    0%, 100% { border-color: transparent; }
+    50% { border-color: black; }
+}
+@keyframes hide-caret {
+    to { border-color: transparent; }
 }
 
 /* Menu Grid */
@@ -416,6 +466,18 @@ header{
     background: #d7b5ff;
 }
 
+/* .main{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    gap: 25px;
+    padding: 20px;
+} */
+
 .dropdown-content {
     max-height: 0;
     overflow: hidden;
@@ -423,12 +485,17 @@ header{
     padding-left: 10px;
     padding-right: 10px;
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    /* grid-template-columns: repeat(2, 1fr); */
     gap: 25px;
-    padding: 20px;
+    /* padding: 20px; */
 }
 
-.dropdown.open .dropdown-content {
+.dropdown.open > .dropdown-content {
     padding-top: 10px;
-    max-height: 2000px; /* enough to expand fully */
+    max-height: 100%; /* enough to expand fully */
+}
+
+.main-dropdown-content.open .main-dropdown-content{
+    padding-top:10px;
+    max-height:100%px;
 }

@@ -20,7 +20,7 @@
                 <button class="home btn bubble-text" onclick="window.location.href='index.html'">HOME</button>
                 <button class="menu btn bubble-text" onclick="window.location.href='about.html'">ABOUT</button>
                 <button class="special btn bubble-text" onclick="window.location.href='special.html'">SPECIALS</button>
-                <button class="about btn bubble-text" onclick="window.location.href='about.html'">LOGIN</button>
+                <button class="about btn bubble-text" onclick="window.location.href='sign.html'" id="log-in">LOGIN</button>
             </div>
             <div class="login/signup"></div>
         </div>
@@ -28,20 +28,41 @@
             <div class="inner">
                 <h1>Welcome to The Vineyard Tavern, </h1>
                 <br>
-              <p>Where we're renowned for crafting everything fresh from scratch. Using locally-sourced, seasonal ingredients and time-honored recipes, we create flavorful dishes that blend rustic charm with culinary excellence in every bite.</p>
+              <p>Where we're renowned for crafting everything fresh from scratch.</p>
+              <p>Using locally-sourced, seasonal ingredients and time-honored recipes,</p>
+              <p>we create flavorful dishes that blend rustic charm with culinary excellence</p>
+              <p>in every bite.</p>
             </div>
         </header>
         <div class="container">
             <div class="section-sides">
                 <div class="drink-app" id="drinkBox">
-                    <div class="drinkcontainer">hi
+                    <div class="drinkcontainer">
                         <div class="dropdown">
                             <button class="dropdown-btn">Drinks</button>
-                            <div class="dropdown-content" id="drop-drinks"></div>
+                            <div class="dropdown-content main" id="drop-drinks">
+                                <div class="dropdown">
+                                    <button class="dropdown-btn">Cold</button>
+                                    <div class="dropdown-content" id="drop-cold"></div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="dropdown-btn">Hot</button>
+                                    <div class="dropdown-content" id="drop-hot"></div>
+                                </div>
+                            </div>
                         </div>
                         <div class="dropdown">
                             <button class="dropdown-btn">Appetizers</button>
-                            <div class="dropdown-content" id="drop-appetizers"></div>
+                            <div class="dropdown-content main" id="drop-appetizers">
+                                <div class="dropdown">
+                                    <button class="dropdown-btn">Starters</button>
+                                    <div class="dropdown-content" id="drop-starter"></div>
+                                </div>
+                                <div class="dropdown">
+                                    <button class="dropdown-btn">Soup</button>
+                                    <div class="dropdown-content" id="drop-soup"></div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -51,17 +72,68 @@
                 <div class="menu-dropdowns">
                     <div class="dropdown">
                         <button class="dropdown-btn">Mains</button>
-                        <div class="dropdown-content" id="drop-mains"></div>
+                        <div class="dropdown-content main" id="drop-mains">
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Pasta</button>
+                                <div class="dropdown-content" id="drop-pasta"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Burgers</button>
+                                <div class="dropdown-content" id="drop-burger"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Chicken</button>
+                                <div class="dropdown-content" id="drop-chicken"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Beef</button>
+                                <div class="dropdown-content" id="drop-beef"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Seafood</button>
+                                <div class="dropdown-content" id="drop-seafood"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="dropdown">
                         <button class="dropdown-btn">Sides</button>
-                        <div class="dropdown-content" id="drop-sides"></div>
+                        <div class="dropdown-content main" id="drop-sides">
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Potatoes</button>
+                                <div class="dropdown-content" id="drop-potatoes"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Vegetables</button>
+                                <div class="dropdown-content" id="drop-vegetables"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Breads</button>
+                                <div class="dropdown-content" id="drop-bread"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Salads</button>
+                                <div class="dropdown-content" id="drop-salad"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="dropdown">
                         <button class="dropdown-btn">Desserts</button>
-                        <div class="dropdown-content" id="drop-desserts"></div>
+                        <div class="dropdown-content main" id="drop-desserts">
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Cakes</button>
+                                <div class="dropdown-content" id="drop-cake"></div>
+                            </div>
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Pies</button>
+                                <div class="dropdown-content" id="drop-pie"></div>
+                            </div> 
+                            <div class="dropdown">
+                                <button class="dropdown-btn">Frozen</button>
+                                <div class="dropdown-content" id="drop-frozen"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="dropdown">

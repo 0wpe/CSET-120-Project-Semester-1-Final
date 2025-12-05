@@ -337,7 +337,7 @@ itemForm.addEventListener("submit", (e) => {
             name: name.value,
             image: imgData,
             description: description.value,
-            price: price.value,
+            price: Number(price.value),
             ingredients: [],
             itemType: itemType.value
         };

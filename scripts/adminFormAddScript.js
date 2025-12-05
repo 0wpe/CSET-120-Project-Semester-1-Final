@@ -1,7 +1,4 @@
-//loading issue needs fix but lowkey pretty nice
-
 let db;
-
 
 const request = indexedDB.open("StoreDB", 1);
 request.onupgradeneeded = (event) => {
@@ -61,16 +58,16 @@ const fileInput = document.getElementById("fileInput");
 
 dropZone.addEventListener("dragover", (e) => {
     e.preventDefault();
-    dropZone.style.borderColor = "blue";
+    dropZone.classList.add("dragover");
 });
 
 dropZone.addEventListener("dragleave", () => {
-    dropZone.style.borderColor = "#aaa";
+    dropZone.classList.remove("dragover");
 });
 
 dropZone.addEventListener("drop", (e) => {
     e.preventDefault();
-    dropZone.style.borderColor = "green";
+    dropZone.classList.remove("dragover");
 
 
     const file = e.dataTransfer.files[0];
@@ -96,6 +93,7 @@ dropZone.addEventListener("drop", (e) => {
             } else {
                 const dataTransfer = new DataTransfer();
                 dataTransfer.items.add(file);
+                dropZone.style.display = "none";
 
                 saveImageToDB(file);
             }
@@ -148,9 +146,8 @@ function loadImages() {
             console.log("Loaded image object:", item);
             
             const container = document.createElement("div");
-            container.style.display = "inline-block";
-            container.style.margin = "10px";
-            container.style.textAlign = "center";
+            container.classList.add("imgContainer");
+
 
             const img = document.createElement("img");
             img.src = item.image ;
@@ -159,7 +156,8 @@ function loadImages() {
             img.style.borderRadius = "6px";
 
             const btn = document.createElement("button");
-            btn.textContent = "Delete";
+            btn.classList.add("deleteBtn");
+            btn.textContent = "Remove option";
             btn.type = "button";
             btn.style.marginTop = "5px";
             btn.onclick = () => deleteImage(item.imageId);
@@ -176,6 +174,7 @@ function deleteImage(imageId) {
     const transaction = db.transaction(["images"], "readwrite");
     const store = transaction.objectStore("images");
     store.delete(imageId);
+    dropZone.style.display = "flex";
 
     transaction.oncomplete = loadImages;
 }
@@ -219,12 +218,12 @@ function addProductToDB(productObj) {
 
             const exists = products.some(
                 p =>
-                    p.title.trim().toLowerCase() ===
-                    productObj.title.trim().toLowerCase()
+                    p.name.trim().toLowerCase() ===
+                    productObj.name.trim().toLowerCase()
             );
 
             if (exists) {
-                alert("A product with this title already exists!");
+                alert("A product with this name already exists!");
                 reject("Duplicate product");
                 return;
             }
@@ -284,11 +283,12 @@ function removeIMG(request) {
     };
 }
 
-let title = document.getElementById("itemTitle");
+let name = document.getElementById("itemName");
 let description = document.getElementById("itemDescription");
 let price = document.getElementById("itemPrice");
 let fileForm = document.getElementById("fileInput");
 let itemForm = document.getElementById("itemForm");
+let itemType = document.getElementById("itemType");
 
 itemForm.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -330,14 +330,16 @@ itemForm.addEventListener("submit", (e) => {
         const imgData = images[0].image;
 
         console.log("Image for product:", imgData);
-        console.log("Title:", title.value);
+        console.log("name:", name.value);
 
         // Build item object
         const newProduct = {
-            title: title.value,
+            name: name.value,
+            image: imgData,
             description: description.value,
-            price: price.value,
-            image: imgData
+            price: Number(price.value),
+            ingredients: [],
+            itemType: itemType.value
         };
 
         console.log("Product ready:", newProduct);
@@ -347,12 +349,8 @@ itemForm.addEventListener("submit", (e) => {
             console.log("Saved with productId:", id);
         });
         //.then() is done becuase the system has to wait for the changes to happen becuase like always indexedDB happpens in the background so .then foces it to wait for the changes
-
-
-        
-
     };
-        title.innerText = "";
+        name.innerText = "";
         description.innerText = "";
         price.innerText = "";
 });

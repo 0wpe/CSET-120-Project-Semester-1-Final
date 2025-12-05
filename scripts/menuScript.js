@@ -94,30 +94,30 @@ class CartItem {
 // RAW DEFAULT PRODUCTS
 // ===============================
 const rawItems = [
-    { name: "Bread Rolls", image: "assets/imgs/initialItemImgs/breadRoll.jpg", description: "Warm, freshly baked bread rolls with butter.", price: 5.99, ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}], foodType: "Appetizer" },
-    { name: "Mozzarella Sticks", image:"assets/imgs/initialItemImgs/mozzarellaStick.jpg", description: "Crispy breaded mozzarella sticks served with marinara.", price: 7.99, ingredients: [{name: "Cheese", type: "dairy"}, {name: "Bread Crumbs", type: "grain"}, {name: "Oil", type: "fat"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Appetizer" },
-    { name: "Creamy Ravioli", image: "assets/imgs/initialItemImgs/creamyRavioli.jpg", description: "Soft cheese-filled ravioli tossed in a creamy sauce.", price: 8.99, ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Cream Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Appetizer" },
-    { name: "French Fries", image: "assets/imgs/initialItemImgs/frenchFries.jpg", price: 3.99, description: "Crispy golden fries lightly salted.", ingredients: [{name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}, {name: "Salt", type: "seasoning"}], foodType: "Side" },
-    { name: "Steamed Broccoli", image: "assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "Side" },
-    { name: "Mini-Salad", image: "assets/imgs/initialItemImgs/miniSalad.jpg", price: 3.99, description: "A small mixed salad with dressing.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Tomato", type: "vegetable"}, {name: "Cucumber", type: "vegetable"}, {name: "Dressing", type: "sauce"}], foodType: "Side" },
-    { name: "Garlic Bread", image: "assets/imgs/initialItemImgs/garlicBread.jpg", price: 4.49, description: "Toasted bread slices topped with garlic butter.", ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Garlic", type: "vegetable"}, {name: "Herbs", type: "seasoning"}], foodType: "Side" },
-    { name: "Lasagna", image: "assets/imgs/initialItemImgs/lasagna.jpg", price: 14.99, description: "Layers of pasta baked with meat sauce and cheese.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Cheese", type: "dairy"}], foodType: "Main" },
-    { name: "Chicken Alfredo Pasta", image: "assets/imgs/initialItemImgs/chickenAlfredo.png", price: 16.99, description: "Creamy Alfredo pasta topped with grilled chicken.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Chicken", type: "meat"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
-    { name: "Chicken Parmesan", image: "assets/imgs/initialItemImgs/chickenParm.jpg", price: 15.99, description: "Breaded chicken topped with marinara and melted cheese.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Bread Crumbs", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Main" },
-    { name: "Shrimp Alfredo Pasta", image: "assets/imgs/initialItemImgs/shrimpAlfredoPastajpg.jpg", price: 17.99, description: "Creamy Alfredo pasta with sautéed shrimp.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Shrimp", type: "seafood"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
-    { name: "Caesar Salad", image: "assets/imgs/initialItemImgs/caesarSalad.jpg", price: 10.99, description: "Crisp romaine lettuce with Caesar dressing and croutons.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Croutons", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Dressing", type: "sauce"}], foodType: "Main" },
-    { name: "Spaghetti & Meatballs (Gluten-Free)", image: "assets/imgs/initialItemImgs/spaghettiMeatballs.jpg", price: 13.99, description: "Gluten-free spaghetti with homemade meatballs.", ingredients: [{name: "Gluten-Free Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Main" },
-    { name: "Black Ink Pasta", image: "assets/imgs/initialItemImgs/blackInkPasta.jpg", price: 18.99, description: "Squid ink pasta served with seafood and light sauce.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Squid Ink", type: "seafood"}, {name: "Seafood", type: "seafood"}, {name: "Olive Oil", type: "fat"}], foodType: "Main" },
-    { name: "Water", image: "assets/imgs/initialItemImgs/waterBottle.jpg", price: 1.99, description: "Fresh chilled water served with optional ice.", ingredients: [{name: "Water", type: "beverage"}, {name: "Ice", type: "beverage"}], foodType: "Drink" },
-    { name: "Coke", image: "assets/imgs/initialItemImgs/cocacola.jpg", price: 2.99, description: "Classic carbonated cola beverage.", ingredients: [{name: "Carbonated Water", type: "beverage"}, {name: "Sweetener", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Drink" },
-    { name: "Lemonade", image: "assets/imgs/initialItemImgs/lemonade.jpg", price: 3.49, description: "Fresh lemonade made with real lemons.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Raspberry Lemonade", image:"assets/imgs/initialItemImgs/raspberryLemonade.jpg", price: 3.99, description: "Tart lemonade mixed with raspberry flavor.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Raspberry", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Passion Smoothie", image:"assets/imgs/initialItemImgs/passionSmoothie.jpg", price: 4.99, description: "Sweet passionfruit blended into a chilled smoothie.", ingredients: [{name: "Passionfruit", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Watermelon Smoothie", image:"assets/imgs/initialItemImgs/watermelonSmoothie.jpg", price: 4.99, description: "Refreshing frozen watermelon smoothie.", ingredients: [{name: "Watermelon", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Cheesecake", image:"assets/imgs/initialItemImgs/cheesecake.jpg", price: 6.49, description: "Classic creamy cheesecake with a graham crust.", ingredients: [{name: "Cheese", type: "dairy"}, {name: "Crust", type: "grain"}, {name: "Sugar", type: "sweetener"}, {name: "Cream", type: "dairy"}], foodType: "Dessert" },
-    { name: "Molten Chocolate Cake", image:"assets/imgs/initialItemImgs/moltenChocolateCake.jpg", price: 6.99, description: "Warm chocolate cake with a soft melted center.", ingredients: [{name: "Chocolate", type: "sweet"}, {name: "Flour", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Sugar", type: "sweetener"}], foodType: "Dessert" },
-    { name: "Gelato", image:"assets/imgs/initialItemImgs/sorbet.jpg", price: 5.49, description: "Smooth Italian-style ice cream.", ingredients: [{name: "Milk", type: "dairy"}, {name: "Sugar", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Dessert" },
-    { name: "Melon Sorbet", image:"assets/imgs/initialItemImgs/melonSorbet.jpg", price: 4.99, description: "Light and refreshing melon-flavored sorbet.", ingredients: [{name: "Melon", type: "fruit"}, {name: "Sugar", type: "sweetener"}, {name: "Water", type: "beverage"}], foodType: "Dessert" },
+    { name: "Bread Rolls", image: "assets/imgs/initialItemImgs/breadRoll.jpg", description: "Warm, freshly baked bread rolls with butter.", price: 5.99, ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}], foodType: "Bread" },
+    { name: "Mozzarella Sticks", image:"assets/imgs/initialItemImgs/mozzarellaStick.jpg", description: "Crispy breaded mozzarella sticks served with marinara.", price: 7.99, ingredients: [{name: "Cheese", type: "dairy"}, {name: "Bread Crumbs", type: "grain"}, {name: "Oil", type: "fat"}, {name: "Tomato Sauce", type: "sauce"}], a: "Bread" },
+    { name: "Creamy Ravioli", image: "assets/imgs/initialItemImgs/creamyRavioli.jpg", description: "Soft cheese-filled ravioli tossed in a creamy sauce.", price: 8.99, ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Cream Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Bread" },
+    { name: "French Fries", image: "assets/imgs/initialItemImgs/frenchFries.jpg", price: 3.99, description: "Crispy golden fries lightly salted.", ingredients: [{name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}, {name: "Salt", type: "seasoning"}], foodType: "Potatoe" },
+    { name: "Steamed Broccoli", image: "assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "vegetable" },
+    { name: "Mini-Salad", image: "assets/imgs/initialItemImgs/miniSalad.jpg", price: 3.99, description: "A small mixed salad with dressing.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Tomato", type: "vegetable"}, {name: "Cucumber", type: "vegetable"}, {name: "Dressing", type: "sauce"}], foodType: "Salad" },
+    { name: "Garlic Bread", image: "assets/imgs/initialItemImgs/garlicBread.jpg", price: 4.49, description: "Toasted bread slices topped with garlic butter.", ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Garlic", type: "vegetable"}, {name: "Herbs", type: "seasoning"}], foodType: "Bread" },
+    { name: "Lasagna", image: "assets/imgs/initialItemImgs/lasagna.jpg", price: 14.99, description: "Layers of pasta baked with meat sauce and cheese.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Cheese", type: "dairy"}], foodType: "Pasta" },
+    { name: "Chicken Alfredo Pasta", image: "assets/imgs/initialItemImgs/chickenAlfredo.png", price: 16.99, description: "Creamy Alfredo pasta topped with grilled chicken.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Chicken", type: "meat"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Pasta" },
+    { name: "Chicken Parmesan", image: "assets/imgs/initialItemImgs/chickenParm.jpg", price: 15.99, description: "Breaded chicken topped with marinara and melted cheese.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Bread Crumbs", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Chicken" },
+    { name: "Shrimp Alfredo Pasta", image: "assets/imgs/initialItemImgs/shrimpAlfredoPastajpg.jpg", price: 17.99, description: "Creamy Alfredo pasta with sautéed shrimp.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Shrimp", type: "seafood"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Pasta" },
+    { name: "Caesar Salad", image: "assets/imgs/initialItemImgs/caesarSalad.jpg", price: 10.99, description: "Crisp romaine lettuce with Caesar dressing and croutons.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Croutons", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Dressing", type: "sauce"}], foodType: "Salad" },
+    { name: "Spaghetti & Meatballs (Gluten-Free)", image: "assets/imgs/initialItemImgs/spaghettiMeatballs.jpg", price: 13.99, description: "Gluten-free spaghetti with homemade meatballs.", ingredients: [{name: "Gluten-Free Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Pasta" },
+    { name: "Black Ink Pasta", image: "assets/imgs/initialItemImgs/blackInkPasta.jpg", price: 18.99, description: "Squid ink pasta served with seafood and light sauce.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Squid Ink", type: "seafood"}, {name: "Seafood", type: "seafood"}, {name: "Olive Oil", type: "fat"}], foodType: "Pasta" },
+    { name: "Water", image: "assets/imgs/initialItemImgs/waterBottle.jpg", price: 1.99, description: "Fresh chilled water served with optional ice.", ingredients: [{name: "Water", type: "beverage"}, {name: "Ice", type: "beverage"}], foodType: "Cold" },
+    { name: "Coke", image: "assets/imgs/initialItemImgs/cocacola.jpg", price: 2.99, description: "Classic carbonated cola beverage.", ingredients: [{name: "Carbonated Water", type: "beverage"}, {name: "Sweetener", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Cold" },
+    { name: "Lemonade", image: "assets/imgs/initialItemImgs/lemonade.jpg", price: 3.49, description: "Fresh lemonade made with real lemons.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Cold" },
+    { name: "Raspberry Lemonade", image:"assets/imgs/initialItemImgs/raspberryLemonade.jpg", price: 3.99, description: "Tart lemonade mixed with raspberry flavor.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Raspberry", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Cold" },
+    { name: "Passion Smoothie", image:"assets/imgs/initialItemImgs/passionSmoothie.jpg", price: 4.99, description: "Sweet passionfruit blended into a chilled smoothie.", ingredients: [{name: "Passionfruit", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Cold" },
+    { name: "Watermelon Smoothie", image:"assets/imgs/initialItemImgs/watermelonSmoothie.jpg", price: 4.99, description: "Refreshing frozen watermelon smoothie.", ingredients: [{name: "Watermelon", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Cold" },
+    { name: "Cheesecake", image:"assets/imgs/initialItemImgs/cheesecake.jpg", price: 6.49, description: "Classic creamy cheesecake with a graham crust.", ingredients: [{name: "Cheese", type: "dairy"}, {name: "Crust", type: "grain"}, {name: "Sugar", type: "sweetener"}, {name: "Cream", type: "dairy"}], foodType: "Cake" },
+    { name: "Molten Chocolate Cake", image:"assets/imgs/initialItemImgs/moltenChocolateCake.jpg", price: 6.99, description: "Warm chocolate cake with a soft melted center.", ingredients: [{name: "Chocolate", type: "sweet"}, {name: "Flour", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Sugar", type: "sweetener"}], foodType: "Cake" },
+    { name: "Gelato", image:"assets/imgs/initialItemImgs/sorbet.jpg", price: 5.49, description: "Smooth Italian-style ice cream.", ingredients: [{name: "Milk", type: "dairy"}, {name: "Sugar", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Frozen" },
+    { name: "Melon Sorbet", image:"assets/imgs/initialItemImgs/melonSorbet.jpg", price: 4.99, description: "Light and refreshing melon-flavored sorbet.", ingredients: [{name: "Melon", type: "fruit"}, {name: "Sugar", type: "sweetener"}, {name: "Water", type: "beverage"}], foodType: "Frozen" },
     { name: "Chicken Tenders & Fries", image:"assets/imgs/initialItemImgs/chickenTender.jpg", price: 8.99, description: "Crispy chicken tenders with a side of fries.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Batter", type: "grain"}, {name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}], foodType: "Kids Menu" },
     { name: "Cheeseburger & Fries", image:"assets/imgs/initialItemImgs/cheeseBurger.jpg", price: 9.49, description: "Mini cheeseburger served with crispy fries.", ingredients: [{name: "Beef", type: "meat"}, {name: "Cheese", type: "dairy"}, {name: "Bun", type: "grain"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
     { name: "Mini-Pizza & Fries", image:"assets/imgs/initialItemImgs/miniPizzapg.jpg", price: 8.49, description: "Small cheese pizza with a side of fries.", ingredients: [{name: "Dough", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
@@ -170,12 +170,184 @@ openDB().then(() => {
     req.onsuccess = () => {
         if (!req.result) {
             createProducts().then(() => console.log("Products created."));
+            guestLoading().then();
+            const txCurrentUser = db.transaction(["currentUser"], "readwrite");
+            const storeCurrentUser = txCurrentUser.objectStore("currentUser");
+            
+            const guestUser = {
+                id: 1, 
+                username: "guest", 
+                userId: 1,
+                cart: []
+            };
+            
+            const putCurrentUser = storeCurrentUser.put(guestUser);
+            
+            putCurrentUser.onsuccess = () => {
+                console.log("CurrentUser updated to guest");
+                
+                // Also ensure guest exists in users store
+                const txUsers = db.transaction(["users"], "readwrite");
+                const storeUsers = txUsers.objectStore("users");
+                
+                // Check if guest exists
+                const getGuest = storeUsers.get(1);
+                
+                getGuest.onsuccess = () => {
+                    const guestUserData = {
+                        userId: 1,
+                        username: "guest",
+                        cart: []
+                    };
+                    
+                    // Add/update guest in users store
+                    storeUsers.put(guestUserData);
+                    
+                    txUsers.oncomplete = () => {
+                        console.log("Guest user updated in users store");
+                        window.location.reload();
+                    };
+                    
+                    txUsers.onerror = (error) => {
+                        console.error("Error updating users store:", error);
+                        alert("Logout completed (partial)");
+                        window.location.reload();
+                    };
+                };
+                
+                getGuest.onerror = (error) => {
+                    console.error("Error checking guest user:", error);
+                    alert("Logout completed");
+                    window.location.reload();
+                };
+            };
+            
+            putCurrentUser.onerror = (error) => {
+                console.error("Error updating currentUser:", error);
+                alert("Failed to logout. Please try again.");
+            };
             store.add({ runId: 1, check: true });
         }
     };
 
+    // loadMenuItems().then(() => {
+    //     console.log("loading done");
+    // });
+    changeLoginText().then((result) =>{
+        const loginBtn = document.getElementById("log-in");
+        console.log(result);        
+        if (result) { //result only happens if there is a guest account
+            loginBtn.innerText = "LOGIN";
+            loginBtn.onclick = "window.location.href='sign.html'";
+            console.log(result);
+        } else {
+            console.log("result is empty");
+            loginBtn.innerText = "LOG OUT";       
+            loginBtn.onclick = () => {
+                const check = confirm("Confirm that you want to log out of your account.");
+                console.log(check);
+                if (check) {
+                    // Set currentUser to guest
+                    
+                    const txCurrentUser = db.transaction(["currentUser"], "readwrite");
+                    const storeCurrentUser = txCurrentUser.objectStore("currentUser");
+                    guestLoading().then();
+                    const guestUser = {
+                        id: 1, 
+                        username: "guest", 
+                        userId: 1,
+                        cart: []
+                    };
+                    
+                    const putCurrentUser = storeCurrentUser.put(guestUser);
+                    
+                    putCurrentUser.onsuccess = () => {
+                        console.log("CurrentUser updated to guest");
+                        
+                        // Also ensure guest exists in users store
+                        const txUsers = db.transaction(["users"], "readwrite");
+                        const storeUsers = txUsers.objectStore("users");
+                        
+                        // Check if guest exists
+                        const getGuest = storeUsers.get(1);
+                        
+                        getGuest.onsuccess = () => {
+                            const guestUserData = {
+                                userId: 1,
+                                username: "guest",
+                                cart: []
+                            };
+                            
+                            // Add/update guest in users store
+                            storeUsers.put(guestUserData);
+                            
+                            txUsers.oncomplete = () => {
+                                console.log("Guest user updated in users store");
+                                alert("Logout completed successfully");
+                                window.location.reload();
+                            };
+                            
+                            txUsers.onerror = (error) => {
+                                console.error("Error updating users store:", error);
+                                alert("Logout completed (partial)");
+                                window.location.reload();
+                            };
+                        };
+                        
+                        getGuest.onerror = (error) => {
+                            console.error("Error checking guest user:", error);
+                            alert("Logout completed");
+                            window.location.reload();
+                        };
+                    };
+                    
+                    putCurrentUser.onerror = (error) => {
+                        console.error("Error updating currentUser:", error);
+                        alert("Failed to logout. Please try again.");
+                    };
+                } else {
+                    alert("Log out canceled, you may continue your shopping experience");
+                    return;
+                }
+            };
+            //this is where it changes the textContent and onclick logout function of the button
+            //create an alert that has 2 options to either confirm or reject the logout function
+            //if yes runs fucntion run setting the current user to guest and if no the user continues shopping
+        }
+        
+
+    });
+
     req.onerror = () => console.error("Failed to check first run.");
 });
+
+function changeLoginText() {
+    return new Promise((resolve, reject) => {
+        const txG = db.transaction(["currentUser"], "readonly");
+        const storeG = txG.objectStore("currentUser");
+        const reqG = storeG.getAll();
+        
+        reqG.onsuccess = () => {
+            const result = reqG.result;
+            const guestUser = result.find(user => user.username === "guest");
+            if (guestUser) {
+            resolve(guestUser);
+            } else {
+            resolve();
+            }
+        };
+        reqG.onerror = () => reject(reqG.error);
+    });
+}
+
+function guestLoading() {
+    return new Promise((resolve, reject)=>{
+        const txWrite = db.transaction(["currentUser"], "readwrite");
+        const storeWrite = txWrite.objectStore("currentUser");
+        storeWrite.onsuccess = () => resolve(storeWrite);
+        storeWrite.onerror = () => reject(error);
+    });
+}
 
 // ===================================================
 // ============ USER + CART SYNC LOGIC ===============
@@ -233,6 +405,8 @@ function loadCurrentUserFromDB() {
         reqCU.onerror = reject;
     });
 }
+
+
 
 // Save cart updates to USERS DB
 function saveCartToUserDB() {
@@ -316,15 +490,26 @@ function addToCart(product) {
 // ===============================
 async function loadMenuItems() {
     const menuItems = await loadMenuItemsFromDB();
-    const grid = document.getElementById("drop-drinks");
-    const grid2 = document.getElementById("drop-appetizers");
-    const grid3 = document.getElementById("drop-mains");
-    const grid4 = document.getElementById("drop-sides");
-    const grid5 = document.getElementById("drop-desserts");
-    const grid6 = document.getElementById("drop-kids");
-    if (!grid) return; // If not on menu page, exit
+    const cold = document.getElementById("drop-cold");
+    const hot = document.getElementById("drop-hot");
+    const starter = document.getElementById("drop-starter");
+    const soup = document.getElementById("drop-soup");
+    const pasta = document.getElementById("drop-pasta");
+    const burger = document.getElementById("drop-burger");
+    const chicken = document.getElementById("drop-chicken");
+    const beef = document.getElementById("drop-beef");
+    const seafood = document.getElementById("drop-seafood");
+    const potatoe = document.getElementById("drop-potatoes");
+    const vegetable = document.getElementById("drop-vegetable");
+    const bread = document.getElementById("drop-bread");
+    const salad = document.getElementById("drop-salad");
+    const cake = document.getElementById("drop-cake");
+    const pie = document.getElementById("drop-pie");
+    const frozen = document.getElementById("drop-frozen");
+    const kids = document.getElementById("drop-kids");
+    // if (!grid) return; // If not on menu page, exit
     
-    grid.innerHTML = "";
+    // grid.innerHTML = "";
 
     // Store globally for access in event handlers
     window.loadedMenuItems = menuItems;
@@ -348,26 +533,56 @@ async function loadMenuItems() {
             </div>
         `;
 
-        if(item.foodType=="Drink"){
-          grid.appendChild(card);
+        if(item.foodType=="Cold"){
+          cold.appendChild(card);
         }
-        else if(item.foodType=="Appetizer"){
-          grid2.appendChild(card);
+        else if(item.foodType=="Hot"){
+          hot.appendChild(card);
         }
-        else if(item.foodType=="Main"){
-          grid3.appendChild(card);
+        else if(item.foodType=="Starter"){
+          starter.appendChild(card);
         }
-        else if(item.foodType=="Side"){
-          grid4.appendChild(card);
+        else if(item.foodType=="Soup"){
+          soup.appendChild(card);
         }
-        else if(item.foodType=="Dessert"){
-          grid5.appendChild(card);
+        else if(item.foodType=="Pasta"){
+          pasta.appendChild(card);
         }
-        else if(item.foodType=="Kids"){
-          grid6.appendChild(card);
+        else if(item.foodType=="Burger"){
+          burger.appendChild(card);
+        }
+        else if(item.foodType=="Chicken"){
+          chicken.appendChild(card);
+        }
+        else if(item.foodType=="Beef"){
+          beef.appendChild(card);
+        }
+        else if(item.foodType=="Seafood"){
+          seafood.appendChild(card);
+        }
+        else if(item.foodType=="Potatoe"){
+          potatoe.appendChild(card);
+        }
+        else if(item.foodType=="vegetable"){
+          vegetable.appendChild(card);
+        }
+        else if(item.foodType=="Bread"){
+          bread.appendChild(card);
+        }
+        else if(item.foodType=="Salad"){
+          salad.appendChild(card);
+        }
+        else if(item.foodType=="Cake"){
+          cake.appendChild(card);
+        }
+        else if(item.foodType=="Pie"){
+          pie.appendChild(card);
+        }
+        else if(item.foodType=="Frozen"){
+          frozen.appendChild(card);
         }
         else{
-          grid3.appendChild(card);
+          kids.appendChild(card);
         }
     });
 
@@ -574,12 +789,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function renderDropdownMenu(menuItems) {
     const categories = {
-        "Appetizer": document.getElementById("drop-appetizers"),
-        "Main": document.getElementById("drop-mains"),
-        "Side": document.getElementById("drop-sides"),
-        "Drink": document.getElementById("drop-drinks"),
-        "Dessert": document.getElementById("drop-desserts"),
-        "Kids Menu": document.getElementById("drop-kids")
+        // "Appetizer": document.getElementById("drop-appetizers"),
+        // "Main": document.getElementById("drop-mains"),
+        // "Side": document.getElementById("drop-sides"),
+        // "Drink": document.getElementById("drop-drinks"),
+        // "Dessert": document.getElementById("drop-desserts"),
+        "Kids Menu": document.getElementById("drop-kids"),
+        "Pasta": document.getElementById("drop-pasta"),
+        "Burger": document.getElementById("drop-burger"),
+        "Chicken": document.getElementById("drop-chicken"),
+        "Beef": document.getElementById("drop-beef"),
+        "Seafood": document.getElementById("drop-seafood"),
+        "Potatoe": document.getElementById("drop-potatoes"),
+        "vegetable": document.getElementById("drop-vegetable"),
+        "Bread": document.getElementById("drop-bread"),
+        "Salad": document.getElementById("drop-salad"),
+        "Cold": document.getElementById("drop-cold"),
+        "Hot": document.getElementById("drop-hot"),
+        "Starter": document.getElementById("drop-starter"),
+        "Soup": document.getElementById("drop-soup"),
     };
 
     menuItems.forEach((item, index) => {
