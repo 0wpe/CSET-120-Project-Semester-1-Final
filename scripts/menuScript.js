@@ -94,34 +94,34 @@ class CartItem {
 // RAW DEFAULT PRODUCTS
 // ===============================
 const rawItems = [
-    { name: "Bread Rolls", image: "../assets/imgs/initialItemImgs/breadRoll.jpg", description: "Warm, freshly baked bread rolls with butter.", price: 5.99, ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}], foodType: "Appetizer" },
-    { name: "Mozzarella Sticks", image:"../assets/imgs/initialItemImgs/mozzarellaStick.jpg", description: "Crispy breaded mozzarella sticks served with marinara.", price: 7.99, ingredients: [{name: "Cheese", type: "dairy"}, {name: "Bread Crumbs", type: "grain"}, {name: "Oil", type: "fat"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Appetizer" },
-    { name: "Creamy Ravioli", image: "../assets/imgs/initialItemImgs/creamyRavioli.jpg", description: "Soft cheese-filled ravioli tossed in a creamy sauce.", price: 8.99, ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Cream Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Appetizer" },
-    { name: "French Fries", image: "../assets/imgs/initialItemImgs/frenchFries.jpg", price: 3.99, description: "Crispy golden fries lightly salted.", ingredients: [{name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}, {name: "Salt", type: "seasoning"}], foodType: "Side" },
-    { name: "Steamed Broccoli", image: "../assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "Side" },
-    { name: "Mini-Salad", image: "../assets/imgs/initialItemImgs/miniSalad.jpg", price: 3.99, description: "A small mixed salad with dressing.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Tomato", type: "vegetable"}, {name: "Cucumber", type: "vegetable"}, {name: "Dressing", type: "sauce"}], foodType: "Side" },
-    { name: "Garlic Bread", image: "../assets/imgs/initialItemImgs/garlicBread.jpg", price: 4.49, description: "Toasted bread slices topped with garlic butter.", ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Garlic", type: "vegetable"}, {name: "Herbs", type: "seasoning"}], foodType: "Side" },
-    { name: "Lasagna", image: "../assets/imgs/initialItemImgs/lasagna.jpg", price: 14.99, description: "Layers of pasta baked with meat sauce and cheese.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Cheese", type: "dairy"}], foodType: "Main" },
-    { name: "Chicken Alfredo Pasta", image: "../assets/imgs/initialItemImgs/chickenAlfredo.png", price: 16.99, description: "Creamy Alfredo pasta topped with grilled chicken.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Chicken", type: "meat"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
-    { name: "Chicken Parmesan", image: "../assets/imgs/initialItemImgs/chickenParm.jpg", price: 15.99, description: "Breaded chicken topped with marinara and melted cheese.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Bread Crumbs", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Main" },
-    { name: "Shrimp Alfredo Pasta", image: "../assets/imgs/initialItemImgs/shrimpAlfredoPastajpg.jpg", price: 17.99, description: "Creamy Alfredo pasta with sautéed shrimp.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Shrimp", type: "seafood"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
-    { name: "Caesar Salad", image: "../assets/imgs/initialItemImgs/caesarSalad.jpg", price: 10.99, description: "Crisp romaine lettuce with Caesar dressing and croutons.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Croutons", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Dressing", type: "sauce"}], foodType: "Main" },
-    { name: "Spaghetti & Meatballs (Gluten-Free)", image: "../assets/imgs/initialItemImgs/spaghettiMeatballs.jpg", price: 13.99, description: "Gluten-free spaghetti with homemade meatballs.", ingredients: [{name: "Gluten-Free Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Main" },
-    { name: "Black Ink Pasta", image: "../assets/imgs/initialItemImgs/blackInkPasta.jpg", price: 18.99, description: "Squid ink pasta served with seafood and light sauce.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Squid Ink", type: "seafood"}, {name: "Seafood", type: "seafood"}, {name: "Olive Oil", type: "fat"}], foodType: "Main" },
-    { name: "Water", image: "../assets/imgs/initialItemImgs/waterBottle.jpg", price: 1.99, description: "Fresh chilled water served with optional ice.", ingredients: [{name: "Water", type: "beverage"}, {name: "Ice", type: "beverage"}], foodType: "Drink" },
-    { name: "Coke", image: "../assets/imgs/initialItemImgs/cocacola.jpg", price: 2.99, description: "Classic carbonated cola beverage.", ingredients: [{name: "Carbonated Water", type: "beverage"}, {name: "Sweetener", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Drink" },
-    { name: "Lemonade", image: "../assets/imgs/initialItemImgs/lemonade.jpg", price: 3.49, description: "Fresh lemonade made with real lemons.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Raspberry Lemonade", image:"../assets/imgs/initialItemImgs/raspberryLemonade.jpg", price: 3.99, description: "Tart lemonade mixed with raspberry flavor.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Raspberry", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Passion Smoothie", image:"../assets/imgs/initialItemImgs/passionSmoothie.jpg", price: 4.99, description: "Sweet passionfruit blended into a chilled smoothie.", ingredients: [{name: "Passionfruit", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Watermelon Smoothie", image:"../assets/imgs/initialItemImgs/watermelonSmoothie.jpg", price: 4.99, description: "Refreshing frozen watermelon smoothie.", ingredients: [{name: "Watermelon", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
-    { name: "Cheesecake", image:"../assets/imgs/initialItemImgs/cheesecake.jpg", price: 6.49, description: "Classic creamy cheesecake with a graham crust.", ingredients: [{name: "Cheese", type: "dairy"}, {name: "Crust", type: "grain"}, {name: "Sugar", type: "sweetener"}, {name: "Cream", type: "dairy"}], foodType: "Dessert" },
-    { name: "Molten Chocolate Cake", image:"../assets/imgs/initialItemImgs/moltenChocolateCake.jpg", price: 6.99, description: "Warm chocolate cake with a soft melted center.", ingredients: [{name: "Chocolate", type: "sweet"}, {name: "Flour", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Sugar", type: "sweetener"}], foodType: "Dessert" },
-    { name: "Gelato", image:"../assets/imgs/initialItemImgs/sorbet.jpg", price: 5.49, description: "Smooth Italian-style ice cream.", ingredients: [{name: "Milk", type: "dairy"}, {name: "Sugar", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Dessert" },
-    { name: "Melon Sorbet", image:"../assets/imgs/initialItemImgs/melonSorbet.jpg", price: 4.99, description: "Light and refreshing melon-flavored sorbet.", ingredients: [{name: "Melon", type: "fruit"}, {name: "Sugar", type: "sweetener"}, {name: "Water", type: "beverage"}], foodType: "Dessert" },
-    { name: "Chicken Tenders & Fries", image:"../assets/imgs/initialItemImgs/chickenTender.jpg", price: 8.99, description: "Crispy chicken tenders with a side of fries.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Batter", type: "grain"}, {name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}], foodType: "Kids Menu" },
-    { name: "Cheeseburger & Fries", image:"../assets/imgs/initialItemImgs/cheeseBurger.jpg", price: 9.49, description: "Mini cheeseburger served with crispy fries.", ingredients: [{name: "Beef", type: "meat"}, {name: "Cheese", type: "dairy"}, {name: "Bun", type: "grain"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
-    { name: "Mini-Pizza & Fries", image:"../assets/imgs/initialItemImgs/miniPizzapg.jpg", price: 8.49, description: "Small cheese pizza with a side of fries.", ingredients: [{name: "Dough", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
-    { name: "Macaroni & One Side", image:"../assets/imgs/initialItemImgs/macaroni.jpg", price: 7.99, description: "Creamy macaroni pasta served with your choice of side.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese Sauce", type: "sauce"}], foodType: "Kids Menu" }
+    { name: "Bread Rolls", image: "assets/imgs/initialItemImgs/breadRoll.jpg", description: "Warm, freshly baked bread rolls with butter.", price: 5.99, ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}], foodType: "Appetizer" },
+    { name: "Mozzarella Sticks", image:"assets/imgs/initialItemImgs/mozzarellaStick.jpg", description: "Crispy breaded mozzarella sticks served with marinara.", price: 7.99, ingredients: [{name: "Cheese", type: "dairy"}, {name: "Bread Crumbs", type: "grain"}, {name: "Oil", type: "fat"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Appetizer" },
+    { name: "Creamy Ravioli", image: "assets/imgs/initialItemImgs/creamyRavioli.jpg", description: "Soft cheese-filled ravioli tossed in a creamy sauce.", price: 8.99, ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Cream Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Appetizer" },
+    { name: "French Fries", image: "assets/imgs/initialItemImgs/frenchFries.jpg", price: 3.99, description: "Crispy golden fries lightly salted.", ingredients: [{name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}, {name: "Salt", type: "seasoning"}], foodType: "Side" },
+    { name: "Steamed Broccoli", image: "assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "Side" },
+    { name: "Mini-Salad", image: "assets/imgs/initialItemImgs/miniSalad.jpg", price: 3.99, description: "A small mixed salad with dressing.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Tomato", type: "vegetable"}, {name: "Cucumber", type: "vegetable"}, {name: "Dressing", type: "sauce"}], foodType: "Side" },
+    { name: "Garlic Bread", image: "assets/imgs/initialItemImgs/garlicBread.jpg", price: 4.49, description: "Toasted bread slices topped with garlic butter.", ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Garlic", type: "vegetable"}, {name: "Herbs", type: "seasoning"}], foodType: "Side" },
+    { name: "Lasagna", image: "assets/imgs/initialItemImgs/lasagna.jpg", price: 14.99, description: "Layers of pasta baked with meat sauce and cheese.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Cheese", type: "dairy"}], foodType: "Main" },
+    { name: "Chicken Alfredo Pasta", image: "assets/imgs/initialItemImgs/chickenAlfredo.png", price: 16.99, description: "Creamy Alfredo pasta topped with grilled chicken.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Chicken", type: "meat"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
+    { name: "Chicken Parmesan", image: "assets/imgs/initialItemImgs/chickenParm.jpg", price: 15.99, description: "Breaded chicken topped with marinara and melted cheese.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Bread Crumbs", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}], foodType: "Main" },
+    { name: "Shrimp Alfredo Pasta", image: "assets/imgs/initialItemImgs/shrimpAlfredoPastajpg.jpg", price: 17.99, description: "Creamy Alfredo pasta with sautéed shrimp.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Shrimp", type: "seafood"}, {name: "Cream Sauce", type: "sauce"}, {name: "Parmesan", type: "dairy"}], foodType: "Main" },
+    { name: "Caesar Salad", image: "assets/imgs/initialItemImgs/caesarSalad.jpg", price: 10.99, description: "Crisp romaine lettuce with Caesar dressing and croutons.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Croutons", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Dressing", type: "sauce"}], foodType: "Main" },
+    { name: "Spaghetti & Meatballs (Gluten-Free)", image: "assets/imgs/initialItemImgs/spaghettiMeatballs.jpg", price: 13.99, description: "Gluten-free spaghetti with homemade meatballs.", ingredients: [{name: "Gluten-Free Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Main" },
+    { name: "Black Ink Pasta", image: "assets/imgs/initialItemImgs/blackInkPasta.jpg", price: 18.99, description: "Squid ink pasta served with seafood and light sauce.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Squid Ink", type: "seafood"}, {name: "Seafood", type: "seafood"}, {name: "Olive Oil", type: "fat"}], foodType: "Main" },
+    { name: "Water", image: "assets/imgs/initialItemImgs/waterBottle.jpg", price: 1.99, description: "Fresh chilled water served with optional ice.", ingredients: [{name: "Water", type: "beverage"}, {name: "Ice", type: "beverage"}], foodType: "Drink" },
+    { name: "Coke", image: "assets/imgs/initialItemImgs/cocacola.jpg", price: 2.99, description: "Classic carbonated cola beverage.", ingredients: [{name: "Carbonated Water", type: "beverage"}, {name: "Sweetener", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Drink" },
+    { name: "Lemonade", image: "assets/imgs/initialItemImgs/lemonade.jpg", price: 3.49, description: "Fresh lemonade made with real lemons.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
+    { name: "Raspberry Lemonade", image:"assets/imgs/initialItemImgs/raspberryLemonade.jpg", price: 3.99, description: "Tart lemonade mixed with raspberry flavor.", ingredients: [{name: "Water", type: "beverage"}, {name: "Lemon", type: "fruit"}, {name: "Raspberry", type: "fruit"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
+    { name: "Passion Smoothie", image:"assets/imgs/initialItemImgs/passionSmoothie.jpg", price: 4.99, description: "Sweet passionfruit blended into a chilled smoothie.", ingredients: [{name: "Passionfruit", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
+    { name: "Watermelon Smoothie", image:"assets/imgs/initialItemImgs/watermelonSmoothie.jpg", price: 4.99, description: "Refreshing frozen watermelon smoothie.", ingredients: [{name: "Watermelon", type: "fruit"}, {name: "Ice", type: "beverage"}, {name: "Sugar", type: "sweetener"}], foodType: "Drink" },
+    { name: "Cheesecake", image:"assets/imgs/initialItemImgs/cheesecake.jpg", price: 6.49, description: "Classic creamy cheesecake with a graham crust.", ingredients: [{name: "Cheese", type: "dairy"}, {name: "Crust", type: "grain"}, {name: "Sugar", type: "sweetener"}, {name: "Cream", type: "dairy"}], foodType: "Dessert" },
+    { name: "Molten Chocolate Cake", image:"assets/imgs/initialItemImgs/moltenChocolateCake.jpg", price: 6.99, description: "Warm chocolate cake with a soft melted center.", ingredients: [{name: "Chocolate", type: "sweet"}, {name: "Flour", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Sugar", type: "sweetener"}], foodType: "Dessert" },
+    { name: "Gelato", image:"assets/imgs/initialItemImgs/sorbet.jpg", price: 5.49, description: "Smooth Italian-style ice cream.", ingredients: [{name: "Milk", type: "dairy"}, {name: "Sugar", type: "sweetener"}, {name: "Flavoring", type: "flavor"}], foodType: "Dessert" },
+    { name: "Melon Sorbet", image:"assets/imgs/initialItemImgs/melonSorbet.jpg", price: 4.99, description: "Light and refreshing melon-flavored sorbet.", ingredients: [{name: "Melon", type: "fruit"}, {name: "Sugar", type: "sweetener"}, {name: "Water", type: "beverage"}], foodType: "Dessert" },
+    { name: "Chicken Tenders & Fries", image:"assets/imgs/initialItemImgs/chickenTender.jpg", price: 8.99, description: "Crispy chicken tenders with a side of fries.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Batter", type: "grain"}, {name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}], foodType: "Kids Menu" },
+    { name: "Cheeseburger & Fries", image:"assets/imgs/initialItemImgs/cheeseBurger.jpg", price: 9.49, description: "Mini cheeseburger served with crispy fries.", ingredients: [{name: "Beef", type: "meat"}, {name: "Cheese", type: "dairy"}, {name: "Bun", type: "grain"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
+    { name: "Mini-Pizza & Fries", image:"assets/imgs/initialItemImgs/miniPizzapg.jpg", price: 8.49, description: "Small cheese pizza with a side of fries.", ingredients: [{name: "Dough", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
+    { name: "Macaroni & One Side", image:"assets/imgs/initialItemImgs/macaroni.jpg", price: 7.99, description: "Creamy macaroni pasta served with your choice of side.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese Sauce", type: "sauce"}], foodType: "Kids Menu" }
 ];
 
 // ===============================
@@ -316,7 +316,12 @@ function addToCart(product) {
 // ===============================
 async function loadMenuItems() {
     const menuItems = await loadMenuItemsFromDB();
-    const grid = document.getElementById("menuGrid");
+    const grid = document.getElementById("drop-drinks");
+    const grid2 = document.getElementById("drop-appetizers");
+    const grid3 = document.getElementById("drop-mains");
+    const grid4 = document.getElementById("drop-sides");
+    const grid5 = document.getElementById("drop-desserts");
+    const grid6 = document.getElementById("drop-kids");
     if (!grid) return; // If not on menu page, exit
     
     grid.innerHTML = "";
@@ -343,7 +348,27 @@ async function loadMenuItems() {
             </div>
         `;
 
-        grid.appendChild(card);
+        if(item.foodType=="Drink"){
+          grid.appendChild(card);
+        }
+        else if(item.foodType=="Appetizer"){
+          grid2.appendChild(card);
+        }
+        else if(item.foodType=="Main"){
+          grid3.appendChild(card);
+        }
+        else if(item.foodType=="Side"){
+          grid4.appendChild(card);
+        }
+        else if(item.foodType=="Dessert"){
+          grid5.appendChild(card);
+        }
+        else if(item.foodType=="Kids"){
+          grid6.appendChild(card);
+        }
+        else{
+          grid3.appendChild(card);
+        }
     });
 
     // Now attach event handlers
@@ -507,34 +532,78 @@ document.addEventListener("DOMContentLoaded", () => {
     }).catch(error => {
         console.error("Failed to open database:", error);
     });
+  document.querySelectorAll(".dropdown-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const dropdown = btn.parentElement;
+
+      // toggle this dropdown
+      dropdown.classList.toggle("open");
+    });
+  });
 });
 
-// Scroll-triggered fixed cart
-const cartBox = document.getElementById("cartBox");
-const cartInitialTop = cartBox.offsetTop;
-const offset = 138;
+// // Scroll-triggered fixed cart
+// const cartBox = document.getElementById("cartBox");
+// const cartInitialTop = cartBox.offsetTop;
+// const offset = 138;
 
-window.addEventListener("scroll", () => {
-    const scrollY = window.scrollY || window.pageYOffset;
+// window.addEventListener("scroll", () => {
+//     const scrollY = window.scrollY || window.pageYOffset;
 
-    if (scrollY + offset >= cartInitialTop) {
-        cartBox.classList.add("cart-fixed");
-    } else {
-        cartBox.classList.remove("cart-fixed");
-    }
-});
+//     if (scrollY + offset >= cartInitialTop) {
+//         cartBox.classList.add("cart-fixed");
+//     } else {
+//         cartBox.classList.remove("cart-fixed");
+//     }
+// });
 
-// Scroll-triggered fixed drink-app
-const drinkBox = document.getElementById("drinkBox");
-const drinkInitialTop = drinkBox.offsetTop;
-const Doffset = 138;
+// // Scroll-triggered fixed drink-app
+// const drinkBox = document.getElementById("drinkBox");
+// const drinkInitialTop = drinkBox.offsetTop;
+// const Doffset = 138;
 
-window.addEventListener("scroll", () => {
-    const scrollY = window.scrollY || window.pageYOffset;
+// window.addEventListener("scroll", () => {
+//     const scrollY = window.scrollY || window.pageYOffset;
 
-    if (scrollY + offset >= drinkInitialTop) {
-        drinkBox.classList.add("drink-app-fixed");
-    } else {
-        drinkBox.classList.remove("drink-app-fixed");
-    }
-});
+//     if (scrollY + offset >= drinkInitialTop) {
+//         drinkBox.classList.add("drink-app-fixed");
+//     } else {
+//         drinkBox.classList.remove("drink-app-fixed");
+//     }
+// });
+
+function renderDropdownMenu(menuItems) {
+    const categories = {
+        "Appetizer": document.getElementById("drop-appetizers"),
+        "Main": document.getElementById("drop-mains"),
+        "Side": document.getElementById("drop-sides"),
+        "Drink": document.getElementById("drop-drinks"),
+        "Dessert": document.getElementById("drop-desserts"),
+        "Kids Menu": document.getElementById("drop-kids")
+    };
+
+    menuItems.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.classList.add("menu-card");
+        card.dataset.keyText = item.keyText;
+        card.dataset.index = index;
+
+        card.innerHTML = `
+            <img src="${item.image}" alt="${item.name}">
+            <div class="menu-card-content">
+                <div class="menu-card-title">${item.name}</div>
+                <div class="menu-card-desc">${item.description}</div>
+                <div class="menu-card-price">$${item.price.toFixed(2)}</div>
+                <div class="menu-card-ingredients">
+                    ${item.ingredients.map(i => `<span>${i.name || i}</span>`).join("")}
+                </div>
+                <button class="add-btn" data-index="${index}">Add to Cart</button>
+            </div>
+        `;
+
+        categories[item.foodType].appendChild(card);
+    });
+
+    attachAddToCartBtns(menuItems);
+    attachCardClickHandlers(menuItems);
+}

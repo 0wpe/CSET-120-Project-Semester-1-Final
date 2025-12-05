@@ -30,11 +30,16 @@ header{
 
 .section-middle{
     width:60%;
-    height:100%;
+    height:85vh;
     background:rgb(245, 245, 245);
     border-radius:50px;
     padding:1.5%;
-    padding-bottom:100px;
+    /* padding-bottom:100px; */
+    overflow:scroll;
+}
+
+.section-middle::-webkit-scrollbar{
+    display: none;
 }
 
 .section-sides{
@@ -228,21 +233,21 @@ header{
 }
 
 /* Fixed cart when scrolling */
-.cart-fixed{
+/* .cart-fixed{
     position: fixed;
     top: 57%;
     right: 25px; /* distance from viewport right */
-    transform: translateY(-50%);
+    /* transform: translateY(-50%);
     width:17.3%;
     z-index: 999;
     overflow:scroll;
     height:84%;
     margin-left:-500px;
-}
+} */
 
-.cart-fixed::-webkit-scrollbar{
+/* .cart-fixed::-webkit-scrollbar{
     display: none;
-}
+} */
 
 .drink-app{
     background:rgb(245, 245, 245);
@@ -251,20 +256,20 @@ header{
     padding:5%;
 }
 
-.drink-app-fixed{
+/* .drink-app-fixed{
     position: fixed;
     top: 57%;
     left: 25px; /* distance from viewport right */
-    transform: translateY(-50%);
+    /* transform: translateY(-50%);
     width:17.3%;
     z-index: 999;
     overflow:scroll;
     height:84%;
-}
+} */
 
-.drink-app-fixed::-webkit-scrollbar{
+/* .drink-app-fixed::-webkit-scrollbar{
     display: none;
-}
+} */
 
 .drink-app-fixed .drinkcontainer{
     height:100%;
@@ -275,10 +280,10 @@ header{
 
 .footer{
     margin:0px auto auto auto;
-    height:26vh;
-    width:60%;
+    height:20vh;
+    width:100%;
     background-color:rgb(245, 245, 245);
-    margin-top:-80px;
+    margin-top:10px;
     overflow:hidden;
 }
 
@@ -374,3 +379,56 @@ header{
     font-size:30px;
 }
 
+.menu-dropdowns {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.menu-grid{
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    padding: 20px;
+}
+
+.dropdown {
+    border: 2px solid #a81bff;
+    border-radius: 10px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    background: #fafafa;
+}
+
+.dropdown-btn {
+    width: 100%;
+    padding: 15px;
+    font-size: 20px;
+    text-align: left;
+    background: #e9d4ff;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    color: #881fc9;
+}
+
+.dropdown-btn:hover {
+    background: #d7b5ff;
+}
+
+.dropdown-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.35s ease;
+    padding-left: 10px;
+    padding-right: 10px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+    padding: 20px;
+}
+
+.dropdown.open .dropdown-content {
+    padding-top: 10px;
+    max-height: 2000px; /* enough to expand fully */
+}
