@@ -98,7 +98,7 @@ const rawItems = [
     { name: "Mozzarella Sticks", image:"assets/imgs/initialItemImgs/mozzarellaStick.jpg", description: "Crispy breaded mozzarella sticks served with marinara.", price: 7.99, ingredients: [{name: "Cheese", type: "dairy"}, {name: "Bread Crumbs", type: "grain"}, {name: "Oil", type: "fat"}, {name: "Tomato Sauce", type: "sauce"}], a: "Bread" },
     { name: "Creamy Ravioli", image: "assets/imgs/initialItemImgs/creamyRavioli.jpg", description: "Soft cheese-filled ravioli tossed in a creamy sauce.", price: 8.99, ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Cream Sauce", type: "sauce"}, {name: "Herbs", type: "seasoning"}], foodType: "Bread" },
     { name: "French Fries", image: "assets/imgs/initialItemImgs/frenchFries.jpg", price: 3.99, description: "Crispy golden fries lightly salted.", ingredients: [{name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}, {name: "Salt", type: "seasoning"}], foodType: "Potatoe" },
-    { name: "Steamed Broccoli", image: "assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "vegetable" },
+    { name: "Steamed Broccoli", image: "assets/imgs/initialItemImgs/steamedBroccoli.jpg", price: 3.49, description: "Fresh broccoli steamed until tender.", ingredients: [{name: "Broccoli", type: "vegetable"}, {name: "Salt", type: "seasoning"}, {name: "Olive Oil", type: "fat"}], foodType: "Vegetable" },
     { name: "Mini-Salad", image: "assets/imgs/initialItemImgs/miniSalad.jpg", price: 3.99, description: "A small mixed salad with dressing.", ingredients: [{name: "Lettuce", type: "vegetable"}, {name: "Tomato", type: "vegetable"}, {name: "Cucumber", type: "vegetable"}, {name: "Dressing", type: "sauce"}], foodType: "Salad" },
     { name: "Garlic Bread", image: "assets/imgs/initialItemImgs/garlicBread.jpg", price: 4.49, description: "Toasted bread slices topped with garlic butter.", ingredients: [{name: "Bread", type: "grain"}, {name: "Butter", type: "dairy"}, {name: "Garlic", type: "vegetable"}, {name: "Herbs", type: "seasoning"}], foodType: "Bread" },
     { name: "Lasagna", image: "assets/imgs/initialItemImgs/lasagna.jpg", price: 14.99, description: "Layers of pasta baked with meat sauce and cheese.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Beef", type: "meat"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Cheese", type: "dairy"}], foodType: "Pasta" },
@@ -563,7 +563,7 @@ async function loadMenuItems() {
         else if(item.foodType=="Potatoe"){
           potatoe.appendChild(card);
         }
-        else if(item.foodType=="vegetable"){
+        else if(item.foodType=="Vegetable"){
           vegetable.appendChild(card);
         }
         else if(item.foodType=="Bread"){
