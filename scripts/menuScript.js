@@ -755,6 +755,14 @@ document.addEventListener("DOMContentLoaded", () => {
       dropdown.classList.toggle("open");
     });
   });
+  const purchaseBtn = document.getElementById("purchaseBtn");
+    purchaseBtn.addEventListener("click", () => {
+        document.getElementById("receiptItems").style.display = "block";
+        document.querySelector(".receipt-totals").style.display = "block";
+
+        alert("Thank you for your purchase!");
+    });
+
 });
 
 // // Scroll-triggered fixed cart
