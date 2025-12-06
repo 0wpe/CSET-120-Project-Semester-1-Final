@@ -1,0 +1,255 @@
+:root {
+    --color-dark: #881fc9;
+    --color-light: #a81bff;
+    --color-white: #f5f5f5;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(ellipse at bottom, #1B2735 0%, #090A0F 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Starry background */
+body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20px 30px, white, transparent),
+        radial-gradient(2px 2px at 60px 70px, white, transparent),
+        radial-gradient(1px 1px at 50px 50px, white, transparent),
+        radial-gradient(1px 1px at 130px 80px, white, transparent),
+        radial-gradient(2px 2px at 90px 10px, white, transparent),
+        radial-gradient(1px 1px at 40px 100px, white, transparent),
+        radial-gradient(2px 2px at 110px 120px, white, transparent),
+        radial-gradient(1px 1px at 150px 60px, white, transparent);
+    background-size: 200px 200px;
+    background-repeat: repeat;
+    animation: twinkle 5s ease-in-out infinite;
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+@keyframes twinkle {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 0.3; }
+}
+
+/* Hide radio buttons */
+input[type="radio"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
+.cards-container {
+    --base-rotation: 0deg;
+    --full-circle: 360deg;
+    --radius: 40vw;
+    --duration: 200ms;
+    --cards-container-size: calc(var(--radius) * 2);
+    --cards-container-padding: 2rem;
+    --border-color: var(--color-light);
+    --label-offset: calc(var(--radius) * -1 - 1rem);
+    --label-size: 30px;
+    --label-color: var(--color-white);
+    --label-color-hover: var(--color-light);
+    --label-line-h: 0;
+    --label-line-h-current: 2rem;
+    --label-dot-size: 10px;
+    --title-top: 1.5rem;
+    --title-offset-y: 30px;
+    --info-top: 5rem;
+    --info-width: min(70%, 500px);
+    --info-offset-y: 30px;
+
+    box-sizing: content-box;
+    position: fixed;
+    inset: 0;
+    margin: 5rem auto;
+    width: var(--cards-container-size);
+    height: var(--cards-container-size);
+    padding: var(--cards-container-padding);
+}
+
+@media (width > 600px) {
+    .cards-container {
+        clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);
+    }
+}
+
+@media (min-width: 800px) {
+    .cards-container {
+        --radius: 30vw;
+        --label-size: 40px;
+        --label-dot-size: 15px;
+        --label-line-h-current: 4rem;
+        --title-top: 4rem;
+        --info-top: 8rem;
+    }
+}
+
+@media (min-width: 1200px) {
+    .cards-container {
+        --label-size: 50px;
+    }
+}
+
+.cards {
+    position: absolute;
+    inset: var(--cards-container-padding);
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 2px solid var(--border-color);
+    transition: transform 0.3s ease-in-out var(--duration);
+    list-style: none;
+}
+
+.cards li {
+    position: absolute;
+    inset: 0;
+    margin: 0;
+    padding: 0;
+    transform-origin: center;
+    display: grid;
+    place-content: center;
+    transform: rotate(calc(var(--i) * 360deg / var(--items)));
+    pointer-events: none;
+}
+
+.cards li > label {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    transform: translateY(var(--label-offset));
+    width: var(--label-size);
+    height: var(--label-size);
+    cursor: pointer;
+    pointer-events: initial;
+    text-align: center;
+    color: var(--label-color);
+    font-size: clamp(.8rem, 2.5vw + .04rem, 1rem);
+    font-weight: 600;
+    transition: var(--duration) ease-in-out;
+}
+
+.cards li > label::before {
+    content: '';
+    position: absolute;
+    top: var(--cards-container-padding);
+    left: 50%;
+    translate: -50% 0;
+    width: var(--label-dot-size);
+    height: var(--label-dot-size);
+    aspect-ratio: 50%;
+    border-radius: 50%;
+    background-color: var(--label-color);
+    transition: background-color var(--duration) ease-in-out;
+}
+
+.cards li > label::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    translate: -50% 5px;
+    width: 2px;
+    height: var(--label-line-h);
+    background-color: var(--color-light);
+    transition: height 300ms ease-in-out var(--label-line-delay, 0ms);
+}
+
+.cards li > label:hover {
+    --label-color: var(--label-color-hover);
+    transform: translateY(var(--label-offset)) scale(1.1);
+}
+
+.cards > li > h2,
+.cards > li > p {
+    position: absolute;
+    left: 50%;
+    text-align: center;
+    transform: translate(-50%, 0);
+    transform-origin: center;
+}
+
+.cards > li > h2 {
+    top: var(--title-top);
+    opacity: var(--title-opacity, 0);
+    translate: 0 var(--title-offset-y);
+    transition: var(--duration) ease-in-out var(--title-delay, 0ms);
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--color-white);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.cards > li > p {
+    top: var(--info-top);
+    margin: 0 auto;
+    width: var(--info-width);
+    z-index: 2;
+    font-size: clamp(.8rem, 2.5vw + 0.05rem, .9rem);
+    text-align: left;
+    text-wrap: pretty;
+    opacity: var(--info-opacity, 0);
+    transition: var(--duration) ease-in-out var(--info-delay, 0ms);
+    line-height: 1.6;
+    background: rgba(136, 31, 201, 0.3);
+    padding: 1.5rem;
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+}
+
+/* update custom properties for checked item */
+li:has(input:checked) {
+    --label-opacity: 1;
+    --label-color: var(--color-light);
+    --label-line-h: var(--label-line-h-current);
+    --label-line-delay: calc(var(--duration) * 2);
+    --title-opacity: 1;
+    --title-offset-y: 0;
+    --title-delay: calc(var(--duration) * 3);
+    --info-opacity: 1;
+    --info-offset-y: 0;
+    --info-delay: calc(var(--duration) * 4);
+}
+
+/* rotate container based on checked radio */
+.cards:has(input:checked) {
+    transform: rotate(calc(var(--base-rotation) - (var(--index) * var(--full-circle) / var(--items))));
+}
+
+.cards:has(li:nth-child(1)>input:checked) { --index: 0; }
+.cards:has(li:nth-child(2)>input:checked) { --index: 1; }
+.cards:has(li:nth-child(3)>input:checked) { --index: 2; }
+.cards:has(li:nth-child(4)>input:checked) { --index: 3; }
+.cards:has(li:nth-child(5)>input:checked) { --index: 4; }
+.cards:has(li:nth-child(6)>input:checked) { --index: 5; }
+.cards:has(li:nth-child(7)>input:checked) { --index: 6; }
+.cards:has(li:nth-child(8)>input:checked) { --index: 7; }
+.cards:has(li:nth-child(9)>input:checked) { --index: 8; }
+.cards:has(li:nth-child(10)>input:checked) { --index: 9; }
+.cards:has(li:nth-child(11)>input:checked) { --index: 10; }
+.cards:has(li:nth-child(12)>input:checked) { --index: 11; }
