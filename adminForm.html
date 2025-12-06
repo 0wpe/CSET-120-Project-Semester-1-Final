@@ -1,0 +1,101 @@
+<!-- Add this to gitHUB -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Menu Items - Admin Panel</title>
+    <link rel="stylesheet" href="styles/adminFormStyle.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <!-- Home button on far left -->
+        <a href="index.html" class="home-btn">Home</a>
+        
+        <!-- Navigation links in the middle/center-right -->
+        <div class="nav-links">
+            <a href="#" class="nav-link active">Add</a>
+            <a href="adminDeleteIndex.html" class="nav-link">Delete</a>
+        </div>
+    </nav>
+
+    <!-- Main content container -->
+    <div class="container">
+        <h1>Add New Menu Item</h1>
+        
+        <!-- Form for adding items -->
+        <form id="itemForm">
+            <div class="form-group">
+                <label for="itemName">Item Name </label>
+                <input class="input" type="text" name="name" id="itemName" placeholder="Enter item name" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemDescription">Description</label>
+                <textarea class="input textarea" name="description" id="itemDescription" placeholder="Enter item description (Optional)" rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemPrice">Price </label>
+                <input class="input" type="number" name="price" id="itemPrice" placeholder="Enter item's price" min="0" step="0.01" required>
+            </div>
+            
+            <div class="form-group">
+                <label>Item Image</label>
+                <div id="dropZone">
+                    <div class="dropzone-content">
+                        <span class="dropzone-icon">📁</span>
+                        <p>Drag & drop image here or click to browse</p>
+                        <p class="dropzone-hint">Max size: 5MB | Supported: JPG, PNG, GIF</p>
+                    </div>
+                </div>
+                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
+                <div class="file-info" id="fileInfo"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="itemType">Food Type </label>
+                <select class="input" name="foodType" id="itemType" required>
+                    <option value="">Pick what type of food it is</option>
+                    <option value="Appetizer">Appetizer</option>
+                    <option value="Side">Side</option>
+                    <option value="Main">Main</option>
+                    <option value="Drink">Drink</option>
+                    <option value="Dessert">Dessert</option>
+                    <option value="Kids Menu">Kids Menu</option>
+                </select>
+            </div>
+            
+            <!-- Preview of selected image -->
+            <div class="form-group" id="imagePreviewContainer" style="display: none;">
+                <label>Image Preview</label>
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImage" src="" alt="Preview">
+                    <button type="button" class="remove-image-btn" id="removeImageBtn">✕ Remove</button>
+                </div>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" id="formBtn" class="submit-btn">Add Item to Menu</button>
+                <button type="button" id="clearBtn" class="clear-btn">Clear Form</button>
+            </div>
+            
+            <!-- Success/Error Messages -->
+            <div id="messageContainer"></div>
+        </form>
+        
+        <!-- Recently added items -->
+        <div class="recent-items" id="recentItemsContainer" style="display: none;">
+            <h2>Recently Added Items</h2>
+            <div class="items-grid" id="recentItemsGrid">
+                <!-- Recently added items will appear here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- External JavaScript files -->
+    <script src="scripts/adminFormScript.js"></script>
+</body>
+</html>

@@ -44,6 +44,54 @@ function openDB() {
         };
     });
 }
+//changes - 12/6
+// ===============================
+// CREATE ADMIN ACCOUNT ON STARTUP
+// ===============================
+function createAdminOnStartup() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["users"], "readonly");
+        const store = tx.objectStore("users");
+        const req = store.getAll();
+
+        req.onsuccess = () => {
+            const allUsers = req.result;
+
+            // Check if admin already exists
+            if (allUsers.some(u => u.username === "odejuanknobe")) {
+                console.log("Admin account already exists");
+                resolve();
+                return;
+            }
+
+            // Create admin account
+            const txWrite = db.transaction(["users"], "readwrite");
+            const storeWrite = txWrite.objectStore("users");
+            
+            const adminUser = {
+                username: "odejuanknobe",
+                password: "08162008",
+                email: "admin@restaurant.com",
+                cart: [],
+                isAdmin: true
+            };
+
+            const addReq = storeWrite.add(adminUser);
+            
+            addReq.onsuccess = () => {
+                console.log("Admin account created successfully");
+                resolve();
+            };
+            
+            addReq.onerror = (error) => {
+                console.error("Failed to create admin account:", error);
+                reject(error);
+            };
+        };
+
+        req.onerror = reject;
+    });
+}
 
 // ===============================
 // KEYTEXT GENERATOR
@@ -158,169 +206,7 @@ function createProducts() {
         txProducts.onerror = reject;
     });
 }
-
-// ===============================
-// MARK FIRST RUN EXECUTION
-// ===============================
-openDB().then(() => {
-    const tx = db.transaction(["createFirstMenuList"], "readwrite");
-    const store = tx.objectStore("createFirstMenuList");
-    const req = store.get(1);
-
-    req.onsuccess = () => {
-        if (!req.result) {
-            createProducts().then(() => console.log("Products created."));
-            guestLoading().then();
-            const txCurrentUser = db.transaction(["currentUser"], "readwrite");
-            const storeCurrentUser = txCurrentUser.objectStore("currentUser");
-            
-            const guestUser = {
-                id: 1, 
-                username: "guest", 
-                userId: 1,
-                cart: []
-            };
-            
-            const putCurrentUser = storeCurrentUser.put(guestUser);
-            
-            putCurrentUser.onsuccess = () => {
-                console.log("CurrentUser updated to guest");
-                
-                // Also ensure guest exists in users store
-                const txUsers = db.transaction(["users"], "readwrite");
-                const storeUsers = txUsers.objectStore("users");
-                
-                // Check if guest exists
-                const getGuest = storeUsers.get(1);
-                
-                getGuest.onsuccess = () => {
-                    const guestUserData = {
-                        userId: 1,
-                        username: "guest",
-                        cart: []
-                    };
-                    
-                    // Add/update guest in users store
-                    storeUsers.put(guestUserData);
-                    
-                    txUsers.oncomplete = () => {
-                        console.log("Guest user updated in users store");
-                        window.location.reload();
-                    };
-                    
-                    txUsers.onerror = (error) => {
-                        console.error("Error updating users store:", error);
-                        alert("Logout completed (partial)");
-                        window.location.reload();
-                    };
-                };
-                
-                getGuest.onerror = (error) => {
-                    console.error("Error checking guest user:", error);
-                    alert("Logout completed");
-                    window.location.reload();
-                };
-            };
-            
-            putCurrentUser.onerror = (error) => {
-                console.error("Error updating currentUser:", error);
-                alert("Failed to logout. Please try again.");
-            };
-            store.add({ runId: 1, check: true });
-        }
-    };
-
-    // loadMenuItems().then(() => {
-    //     console.log("loading done");
-    // });
-    changeLoginText().then((result) =>{
-        const loginBtn = document.getElementById("log-in");
-        console.log(result);        
-        if (result) { //result only happens if there is a guest account
-            loginBtn.innerText = "LOGIN";
-            loginBtn.onclick = "window.location.href='sign.html'";
-            console.log(result);
-        } else {
-            console.log("result is empty");
-            loginBtn.innerText = "LOG OUT";       
-            loginBtn.onclick = () => {
-                const check = confirm("Confirm that you want to log out of your account.");
-                console.log(check);
-                if (check) {
-                    // Set currentUser to guest
-                    
-                    const txCurrentUser = db.transaction(["currentUser"], "readwrite");
-                    const storeCurrentUser = txCurrentUser.objectStore("currentUser");
-                    guestLoading().then();
-                    const guestUser = {
-                        id: 1, 
-                        username: "guest", 
-                        userId: 1,
-                        cart: []
-                    };
-                    
-                    const putCurrentUser = storeCurrentUser.put(guestUser);
-                    
-                    putCurrentUser.onsuccess = () => {
-                        console.log("CurrentUser updated to guest");
-                        
-                        // Also ensure guest exists in users store
-                        const txUsers = db.transaction(["users"], "readwrite");
-                        const storeUsers = txUsers.objectStore("users");
-                        
-                        // Check if guest exists
-                        const getGuest = storeUsers.get(1);
-                        
-                        getGuest.onsuccess = () => {
-                            const guestUserData = {
-                                userId: 1,
-                                username: "guest",
-                                cart: []
-                            };
-                            
-                            // Add/update guest in users store
-                            storeUsers.put(guestUserData);
-                            
-                            txUsers.oncomplete = () => {
-                                console.log("Guest user updated in users store");
-                                alert("Logout completed successfully");
-                                window.location.reload();
-                            };
-                            
-                            txUsers.onerror = (error) => {
-                                console.error("Error updating users store:", error);
-                                alert("Logout completed (partial)");
-                                window.location.reload();
-                            };
-                        };
-                        
-                        getGuest.onerror = (error) => {
-                            console.error("Error checking guest user:", error);
-                            alert("Logout completed");
-                            window.location.reload();
-                        };
-                    };
-                    
-                    putCurrentUser.onerror = (error) => {
-                        console.error("Error updating currentUser:", error);
-                        alert("Failed to logout. Please try again.");
-                    };
-                } else {
-                    alert("Log out canceled, you may continue your shopping experience");
-                    return;
-                }
-            };
-            //this is where it changes the textContent and onclick logout function of the button
-            //create an alert that has 2 options to either confirm or reject the logout function
-            //if yes runs fucntion run setting the current user to guest and if no the user continues shopping
-        }
-        
-
-    });
-
-    req.onerror = () => console.error("Failed to check first run.");
-});
-
+//change 12/6
 function changeLoginText() {
     return new Promise((resolve, reject) => {
         const txG = db.transaction(["currentUser"], "readonly");
@@ -843,3 +729,119 @@ function renderDropdownMenu(menuItems) {
     attachAddToCartBtns(menuItems);
     attachCardClickHandlers(menuItems);
 }
+
+function displayAdminBtnFN(){
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["currentUser"], "readonly");
+        const store = tx.objectStore("currentUser");
+        const req = store.get(1);
+        
+        req.onsuccess = () =>{
+            const currentUser = req.result;
+            resolve(currentUser);
+        }
+    });
+}
+
+
+// ===============================
+// MARK FIRST RUN EXECUTION
+// ===============================
+openDB().then(() => {
+    // Create admin account on startup
+    createAdminOnStartup().then(() => {
+        console.log("Admin initialization complete");
+    }).catch(err => {
+        console.error("Admin creation error:", err);
+    });
+
+    displayAdminBtnFN().then((currentUser) => {
+        const adminBtn = document.getElementById("adminBtn");
+        console.log(currentUser);
+        if (currentUser.isAdmin) {//if there is no isAdmin it will be false and if there is an an admin the return will run!
+            adminBtn.style.display = "block";
+        } else {
+            adminBtn.style.display = "none"; 
+        }
+    });
+    
+    const tx = db.transaction(["createFirstMenuList"], "readwrite");
+    const store = tx.objectStore("createFirstMenuList");
+    const req = store.get(1);
+
+    req.onsuccess = () => {
+        if (!req.result) {
+            createProducts().then(() => console.log("Products created."));
+            guestLoading().then();
+            const txCurrentUser = db.transaction(["currentUser"], "readwrite");
+            const storeCurrentUser = txCurrentUser.objectStore("currentUser");
+            
+            const guestUser = {
+                id: 1, 
+                username: "guest", 
+                userId: 1,
+                cart: []
+            };
+            
+            const putCurrentUser = storeCurrentUser.put(guestUser);
+            
+            putCurrentUser.onsuccess = () => {
+                console.log("CurrentUser updated to guest");
+            };
+            
+            putCurrentUser.onerror = (error) => {
+                console.error("Error updating currentUser:", error);
+                alert("Failed to logout. Please try again.");
+            };
+            store.add({ runId: 1, check: true });
+        }
+    };
+
+    changeLoginText().then((result) =>{
+        const loginBtn = document.getElementById("log-in");
+        console.log(result);        
+        if (result) { //result only happens if there is a guest account
+            loginBtn.innerText = "LOGIN";
+            loginBtn.onclick = () => "window.location.href='sign.html'";
+            console.log(result);
+        } else {
+            console.log("result is empty");
+            loginBtn.innerText = "LOG OUT";       
+            loginBtn.onclick = () => {
+                const check = confirm("Confirm that you want to log out of your account.");
+                console.log(check);
+                if (check) {
+                    // Set currentUser to guest
+                    
+                    const txCurrentUser = db.transaction(["currentUser"], "readwrite");
+                    const storeCurrentUser = txCurrentUser.objectStore("currentUser");
+                    guestLoading().then();
+                    const guestUser = {
+                        id: 1, 
+                        username: "guest", 
+                        userId: 1,
+                        cart: []
+                    };
+                    
+                    const putCurrentUser = storeCurrentUser.put(guestUser);
+                    
+                    putCurrentUser.onsuccess = () => {
+                        console.log("CurrentUser updated to guest");
+                    };
+                    
+                    putCurrentUser.onerror = (error) => {
+                        console.error("Error updating currentUser:", error);
+                        alert("Failed to logout. Please try again.");
+                    };
+                } else {
+                    alert("Log out canceled, you may continue your shopping experience");
+                    return;
+                }
+            };
+        }
+        
+
+    });
+
+    req.onerror = () => console.error("Failed to check first run.");
+});

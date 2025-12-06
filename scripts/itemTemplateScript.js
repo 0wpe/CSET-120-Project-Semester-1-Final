@@ -1,41 +1,16 @@
-// Updated version with keyText generation
-
 let db;
 
 function generateKeyText(title, existingKeys) {
-    // Split the title into words:
-    // "Parm Burger" → ["parm", "burger"]
-    // "pasta" → ["pasta"]
     const parts = title.trim().toLowerCase().split(/\s+/);
-
-    // Build the base key:
-    // If there's only ONE word → use that word
-    // Example: "pasta" → "pasta"
-    //
-    // If there are TWO OR MORE words → use:
-    //   firstWord + firstLetterOfSecondWord
-    // Example: "Parm Burger" → "parmb"
     const base = parts.length === 1 ? parts[0] : parts[0] + parts[1][0];
-
-    // Start with the base key
     let key = base;
-
-    // Counter used to create "parmb1", "parmb2", etc.
     let counter = 1;
 
-    // If this key already exists inside "existingKeys" (a Set),
-    // then keep trying base + number until we find a unique one.
-    //
-    // Example:
-    // existingKeys = {"parmb"}
-    // Try "parmb"  → exists
-    // Try "parmb1" → does NOT exist → accept it
     while (existingKeys.has(key)) {
-        key = base + counter;  // append increasing number
-        counter++;             // try the next number if needed
+        key = base + counter; 
+        counter++;            
     }
 
-    // Return the unique keyText for this item
     return key;
 }
 
@@ -182,7 +157,7 @@ rawItems.forEach(item => {
 
 function renderItem(menuItem) {
     document.getElementById("item-image").src = menuItem.image;
-    document.getElementById("item-title").textContent = menuItem.title;
+    document.getElementById("item-name").textContent = menuItem.title;
     document.getElementById("item-description").textContent = menuItem.description;
     document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;
 

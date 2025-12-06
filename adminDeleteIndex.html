@@ -1,14 +1,57 @@
+<!-- Add this to gitHUB -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Delete Items - Admin Panel</title>
+    <link rel="stylesheet" href="styles/adminDeleteStyle.css">
 </head>
 <body>
+    <nav class="navbar">
+        <a href="../index.html" class="home-btn">Home</a>
+        
+        <!-- Navigation links in the middle/center-right -->
+        <div class="nav-links">
+            <a href="adminForm.html" class="nav-link">Add</a>
+            <a href="#" class="nav-link active">Delete</a>
+        </div>
+    </nav>
+
+    <!-- Main content container -->
     <div id="container">
-        <h1>Items will be held here</h1>
+        <h1>Delete Menu Items</h1>
+        
+        <!-- Bulk actions bar -->
+        <div class="bulk-actions">
+            <div class="selected-count">
+                <span id="selectedCount">0</span> items selected
+            </div>
+            <button class="bulk-delete-btn" id="bulkDeleteBtn" disabled>
+                Delete Selected
+            </button>
+        </div>
+        
+        <!-- Loading indicator -->
+        <div class="loading" id="loadingIndicator">
+            <div class="loading-spinner"></div>
+            Loading items from database...
+        </div>
+        
+        <!-- Items grid -->
+        <div class="items-grid" id="itemsGrid" style="display: none;">
+            <!-- Items will be dynamically added here from IndexedDB -->
+        </div>
+        
+        <!-- Empty state (shown when no items) -->
+        <div class="empty-state" id="emptyState" style="display: none;">
+            <div class="empty-icon">📭</div>
+            <div class="empty-text" id="emptyStateText">No items found in the database.</div>
+            <a href="adminForm.html" class="add-item-link" id="addItemLink">Go to Add Items</a>
+        </div>
     </div>
-    <script src="scripts/adminDeleteScript.js"></script>
+
+    <script src="scripts/delScript.js"></script>
 </body>
 </html>
