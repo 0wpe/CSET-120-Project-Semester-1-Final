@@ -124,18 +124,18 @@ body{
     display:flex;
     align-items:center;
     margin-left:auto;
-    margin-right:3%;
+    /* margin-right:0%; */
     width:50%;
     gap:5%;
     height:100%;
 }
 
 .btn{
-    width:20%;
-    height:5vh;
+    width:20%; /* slightly smaller button */
+    height:4.5vh; /* slightly shorter */
     background-color:white;
     color:transparent;
-    font-size:200%;
+    font-size:170%; /* slightly smaller text */
     -webkit-text-stroke:1px #a81bff;
     letter-spacing:2px;
     border-radius:0px;

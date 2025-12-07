@@ -77,6 +77,7 @@ function createAdminOnStartup() {
                 password: "08162008",
                 email: "admin@restaurant.com",
                 cart: [],
+                orders: [],
                 isAdmin: true
             };
 
@@ -279,7 +280,7 @@ function loadCurrentUserFromDB() {
                 if (!userAccount) {
                     console.warn("User account missing.");
                     // Create a default user account
-                    userAccount = { userId: 1, cart: [] };
+                    userAccount = { userId: 1, cart: [], orders: [] };
                     const txWrite = db.transaction(["users"], "readwrite");
                     const storeWrite = txWrite.objectStore("users");
                     storeWrite.add(userAccount);
@@ -866,7 +867,8 @@ openDB().then(() => {
                 id: 1, 
                 username: "guest", 
                 userId: 1,
-                cart: []
+                cart: [],
+                orders: []
             };
             
             const putCurrentUser = storeCurrentUser.put(guestUser);
@@ -906,7 +908,8 @@ openDB().then(() => {
                         id: 1, 
                         username: "guest", 
                         userId: 1,
-                        cart: []
+                        cart: [],
+                        orders: []
                     };
                     
                     const putCurrentUser = storeCurrentUser.put(guestUser);
