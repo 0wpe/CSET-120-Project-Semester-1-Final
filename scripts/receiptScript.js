@@ -234,13 +234,8 @@ function loadReceipt() {
         // Save back to checkoutReceipt
         localStorage.setItem("checkoutReceipt", JSON.stringify(receipt));
 
-        // Append to past orders list in localStorage
-        const pastRaw = localStorage.getItem("pastOrders");
-        const past = pastRaw ? JSON.parse(pastRaw) : [];
-        past.push(order);
-        localStorage.setItem("pastOrders", JSON.stringify(past));
-        // Also persist to IndexedDB 'orders' store
-        saveOrderToIndexedDB(order).catch(err => console.error("Failed to save order to IndexedDB:", err));
+        // Save order to the current user's orders[] in IndexedDB users store
+        saveOrderToUserOrders(order).catch(err => console.error("Failed to save order to user:", err));
 
         alert("Purchase completed. You can now print your receipt.");
         updateButtonsState();
@@ -303,6 +298,39 @@ function saveOrderToIndexedDB(order) {
     }));
 }
 
+// Save order to the logged-in user's orders[] in the users store
+function saveOrderToUserOrders(order) {
+    return openOrdersDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(["currentUser", "users"], "readwrite");
+        const cuStore = tx.objectStore("currentUser");
+        const uStore = tx.objectStore("users");
+
+        const cuReq = cuStore.get(1);
+        cuReq.onsuccess = () => {
+            const cu = cuReq.result;
+            if (!cu || !cu.userId) {
+                reject(new Error("No current user found or missing userId"));
+                return;
+            }
+            const getUser = uStore.get(cu.userId);
+            getUser.onsuccess = () => {
+                const user = getUser.result;
+                if (!user) {
+                    reject(new Error("User not found"));
+                    return;
+                }
+                user.orders = Array.isArray(user.orders) ? user.orders : [];
+                user.orders.push(order);
+                const putReq = uStore.put(user);
+                putReq.onsuccess = () => resolve(order);
+                putReq.onerror = () => reject(putReq.error || new Error("Failed to update user orders"));
+            };
+            getUser.onerror = () => reject(getUser.error || new Error("Failed to fetch user record"));
+        };
+        cuReq.onerror = () => reject(cuReq.error || new Error("Failed to fetch currentUser"));
+    }));
+}
+
 // Exportable helper to transfer a receipt to past orders from any script
 window.transferReceiptToPastOrders = function(receiptLike) {
     // Accepts a receipt-like object and appends a normalized order to pastOrders
@@ -327,12 +355,8 @@ window.transferReceiptToPastOrders = function(receiptLike) {
         total: receiptLike.total || 0
     };
 
-    const pastRaw = localStorage.getItem("pastOrders");
-    const past = pastRaw ? JSON.parse(pastRaw) : [];
-    past.push(order);
-    localStorage.setItem("pastOrders", JSON.stringify(past));
-    // Also persist to IndexedDB 'orders' store
-    saveOrderToIndexedDB(order).catch(err => console.error("Failed to save order to IndexedDB:", err));
+    // Save to the current user's orders[] in IndexedDB users store
+    saveOrderToUserOrders(order).catch(err => console.error("Failed to save order to user:", err));
 
     return order;
 };
