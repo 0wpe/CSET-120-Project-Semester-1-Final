@@ -518,12 +518,24 @@ function attachCardClickHandlers(menuItems) {
 function attachAddToCartBtns(menuItems) {
     document.querySelectorAll(".add-btn").forEach(btn => {
         btn.addEventListener("click", e => {
-            e.stopPropagation(); // Prevent card click event
-            const index = e.target.dataset.index;
+            e.stopPropagation(); // Prevent card redirect click
+            const index = btn.dataset.index;
             const targetItem = menuItems[index];
-            
+
             if (targetItem) {
+                // Fancy Added to Cart feedback
+                const originalText = btn.innerText;
+                btn.disabled = true;
+                btn.classList.add("added");
+                btn.innerText = "Added ✓";
+
                 addToCart(targetItem);
+
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.classList.remove("added");
+                    btn.innerText = originalText;
+                }, 1000);
             }
         });
     });
@@ -622,34 +634,104 @@ function renderReceipt() {
 // FINAL INITIALIZATION
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
-    openDB().then(() => {
-        loadCurrentUserFromDB().then(() => {
+    // OPEN DATABASE
+    openDB()
+        .then(() => {
+            // LOAD USER
+            return loadCurrentUserFromDB();
+        })
+        .then(() => {
+            // LOAD MENU + CART + RECEIPT
             loadMenuItems();
             renderCart();
             renderReceipt();
-        }).catch(error => {
-            console.error("Failed to load user:", error);
+        })
+        .catch(error => {
+            console.error("Failed to initialize:", error);
         });
-    }).catch(error => {
-        console.error("Failed to open database:", error);
-    });
-  document.querySelectorAll(".dropdown-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const dropdown = btn.parentElement;
 
-      // toggle this dropdown
-      dropdown.classList.toggle("open");
-    });
-  });
-  const purchaseBtn = document.getElementById("purchaseBtn");
-    purchaseBtn.addEventListener("click", () => {
-        document.getElementById("receiptItems").style.display = "block";
-        document.querySelector(".receipt-totals").style.display = "block";
-
-        alert("Thank you for your purchase!");
+    // ======= DROPDOWN BUTTON LOGIC (your existing code) =======
+    document.querySelectorAll(".dropdown-btn").forEach(btn => {
+        btn.addEventListener("click", () => {
+            const dropdown = btn.parentElement;
+            dropdown.classList.toggle("open");
+        });
     });
 
+    // ============================
+    //      PURCHASE BUTTON
+    // ============================
+    const purchaseBtn = document.getElementById("purchaseBtn");
+
+    if (purchaseBtn) {
+        purchaseBtn.addEventListener("click", async () => {
+
+            // STOP EMPTY CART PURCHASES
+            if (!items || items.length === 0) {
+                alert("Your cart is empty.");
+                return;
+            }
+
+            // BUILD RECEIPT SNAPSHOT
+            const subtotal = items.reduce(
+                (sum, item) => sum + (item.price || 0) * (item.quantity || 1),
+                0
+            );
+
+            const tax = +(subtotal * 0.07).toFixed(2);
+            const total = +(subtotal + tax).toFixed(2);
+
+            const receipt = {
+                date: new Date().toISOString(),
+                items: items.map(it => ({
+                    name: it.name,
+                    price: it.price,
+                    quantity: it.quantity || 1,
+                    lineTotal: +(it.price * (it.quantity || 1)).toFixed(2)
+                })),
+                subtotal: +subtotal.toFixed(2),
+                tax,
+                total
+            };
+
+            // SAVE TO LOCALSTORAGE SO receipt.html CAN READ IT
+            localStorage.setItem("checkoutReceipt", JSON.stringify(receipt));
+
+            // CLEAR CART IN MEMORY
+            items = [];
+
+            try {
+                // SAVE EMPTY CART TO DB
+                await saveCartToUserDB();
+
+                // UPDATE currentUser STORE
+                const tx = db.transaction(["currentUser"], "readwrite");
+                const store = tx.objectStore("currentUser");
+                const req = store.get(1);
+
+                req.onsuccess = () => {
+                    const cu = req.result || { id: 1, cart: [] };
+                    cu.cart = [];
+                    store.put(cu);
+
+                    // REDIRECT TO RECEIPT PAGE
+                    window.location.href = "receipt.html";
+                };
+
+                req.onerror = () => {
+                    // Even if currentUser fails, still redirect
+                    window.location.href = "receipt.html";
+                };
+            } catch (err) {
+                console.error("Error clearing cart:", err);
+
+                // STILL REDIRECT — receipt was saved in localStorage
+                window.location.href = "receipt.html";
+            }
+        });
+    }
 });
+
 
 // // Scroll-triggered fixed cart
 // const cartBox = document.getElementById("cartBox");

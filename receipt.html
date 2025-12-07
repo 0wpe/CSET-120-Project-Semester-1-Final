@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Receipt - Vineyard Tavern</title>
+        <link rel="stylesheet" href="styles/receiptStyle.css">
+    </head>
+
+    <body>
+        <div class="receipt-card" id="receiptCard">
+            <h1>Vineyard Tavern — Receipt</h1>
+            <div class="meta">Order Date: <span id="orderDate"></span></div>
+
+            <h2>Order Summary</h2>
+
+            <div class="items" id="itemsList"></div>
+
+            <div class="totals">
+                <div><span>Subtotal</span><span id="r-subtotal">$0.00</span></div>
+                <div><span>Tax</span><span id="r-tax">$0.00</span></div>
+                <div><span>Total</span><span id="r-total">$0.00</span></div>
+            </div>
+
+            <div class="controls">
+                <button class="btn primary" id="printBtn">Print Receipt</button>
+                <button class="btn ghost" id="backBtn">Back to Menu</button>
+            </div>
+
+            <p class="small">Thank you for choosing The Vineyard Tavern!</p>
+        </div>
+    </body>
+    <script src="scripts/receiptScript.js"></script>
+</html>
