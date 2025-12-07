@@ -75,6 +75,11 @@ h1 {
     font-size: 15px;
 }
 
+.btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
 .btn.primary {
     background: linear-gradient(135deg, #a81bff, #7c18ca);
     color: white;
@@ -83,6 +88,40 @@ h1 {
 .btn.ghost {
     background: transparent;
     border: 1px solid #ccc;
+}
+
+.customer-details {
+    margin-top: 22px;
+    padding: 16px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background: #faf8ff;
+}
+
+.customer-details h2 {
+    margin: 0 0 10px 0;
+    color: #6423a8;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 12px;
+}
+
+.form-row label {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 6px;
+}
+
+.form-row input,
+.form-row select {
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d7cfee;
+    background: white;
+    font-size: 14px;
 }
 
 .small {
