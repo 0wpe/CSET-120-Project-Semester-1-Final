@@ -26,19 +26,26 @@ function loadReceipt(){
         row.innerHTML = `
             <div>
                 <strong>${item.name}</strong>
-                <div style="font-size: 13px; color: #666;">x${item.quantity} @ $${item.price.toFixed(2)}</div>
+                <div style="font-size: 13px; color: #666;">x${item.quantity} @ ${item.price.toFixed(2)}</div>
             </div>
-            <div>$${item.lineTotal.toFixed(2)}</div>
+            <div>${item.lineTotal.toFixed(2)}</div>
         `;
         container.appendChild(row);
     });
 
     // Totals
-    document.getElementById("r-subtotal").innerText = `$${receipt.subtotal.toFixed(2)}`;
-    document.getElementById("r-tax").innerText = `$${receipt.tax.toFixed(2)}`;
-    document.getElementById("r-total").innerText = `$${receipt.total.toFixed(2)}`;
+    document.getElementById("r-subtotal").innerText = `${receipt.subtotal.toFixed(2)}`;
+    document.getElementById("r-tax").innerText = `${receipt.tax.toFixed(2)}`;
+    document.getElementById("r-total").innerText = `${receipt.total.toFixed(2)}`;
 
     // Buttons
     document.getElementById("printBtn").addEventListener("click", () => window.print());
     document.getElementById("backBtn").addEventListener("click", () => window.location.href = "index.html");
 };
+
+// Ensure the receipt renders after the DOM is ready
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", loadReceipt);
+} else {
+    loadReceipt();
+}
