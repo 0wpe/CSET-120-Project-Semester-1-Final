@@ -5,7 +5,7 @@ let db;
 
 function openDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("StoreDB", 1);
+        const request = indexedDB.open("StoreDB", 2);
 
         request.onupgradeneeded = (event) => {
             const upgradeDB = event.target.result;
@@ -22,6 +22,10 @@ function openDB() {
             }
             if (!upgradeDB.objectStoreNames.contains("images")) {
                 upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
+            }
+            // New store for finalized orders (past orders)
+            if (!upgradeDB.objectStoreNames.contains("orders")) {
+                upgradeDB.createObjectStore("orders", { keyPath: "orderId" });
             }
             if (!upgradeDB.objectStoreNames.contains("targetItem")) {
                 upgradeDB.createObjectStore("targetItem", { keyPath: "targetItemId" });

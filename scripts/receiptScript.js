@@ -239,6 +239,8 @@ function loadReceipt() {
         const past = pastRaw ? JSON.parse(pastRaw) : [];
         past.push(order);
         localStorage.setItem("pastOrders", JSON.stringify(past));
+        // Also persist to IndexedDB 'orders' store
+        saveOrderToIndexedDB(order).catch(err => console.error("Failed to save order to IndexedDB:", err));
 
         alert("Purchase completed. You can now print your receipt.");
         updateButtonsState();
@@ -275,6 +277,65 @@ function detectCardBrand(num) {
     if (/^6(011|5)/.test(num)) return "Discover";
     return "Card";
 }
+
+// IndexedDB helpers for storing past orders
+function openOrdersDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("StoreDB", 2);
+        request.onupgradeneeded = (event) => {
+            const db = event.target.result;
+            if (!db.objectStoreNames.contains("orders")) {
+                db.createObjectStore("orders", { keyPath: "orderId" });
+            }
+        };
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = () => reject(request.error || new Error("Failed to open IndexedDB"));
+    });
+}
+
+function saveOrderToIndexedDB(order) {
+    return openOrdersDB().then(db => new Promise((resolve, reject) => {
+        const tx = db.transaction(["orders"], "readwrite");
+        const store = tx.objectStore("orders");
+        const req = store.put(order);
+        req.onsuccess = () => resolve(order);
+        req.onerror = () => reject(req.error || new Error("Failed to save order"));
+    }));
+}
+
+// Exportable helper to transfer a receipt to past orders from any script
+window.transferReceiptToPastOrders = function(receiptLike) {
+    // Accepts a receipt-like object and appends a normalized order to pastOrders
+    if (!receiptLike || !receiptLike.items || !Array.isArray(receiptLike.items)) {
+        throw new Error("Invalid receipt object passed to transferReceiptToPastOrders");
+    }
+
+    const order = {
+        orderId: cryptoRandomId(),
+        name: receiptLike.name || "",
+        paymentType: receiptLike.paymentType || "",
+        createdAt: receiptLike.date || new Date().toISOString(),
+        purchasedAt: receiptLike.purchasedAt || new Date().toISOString(),
+        items: receiptLike.items.map(i => ({
+            name: i.name,
+            price: i.price,
+            quantity: i.quantity,
+            lineTotal: i.lineTotal
+        })),
+        subtotal: receiptLike.subtotal || 0,
+        tax: receiptLike.tax || 0,
+        total: receiptLike.total || 0
+    };
+
+    const pastRaw = localStorage.getItem("pastOrders");
+    const past = pastRaw ? JSON.parse(pastRaw) : [];
+    past.push(order);
+    localStorage.setItem("pastOrders", JSON.stringify(past));
+    // Also persist to IndexedDB 'orders' store
+    saveOrderToIndexedDB(order).catch(err => console.error("Failed to save order to IndexedDB:", err));
+
+    return order;
+};
 
 // Ensure the receipt renders after the DOM is ready
 if (document.readyState === "loading") {
