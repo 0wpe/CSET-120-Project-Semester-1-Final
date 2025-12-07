@@ -1,5 +1,10 @@
+//Add this to gitHUB *change on line 104
+
+//changes made
+
 let db;
 
+/* ---------------- KEY TEXT ---------------- */
 function generateKeyText(title, existingKeys) {
     const parts = title.trim().toLowerCase().split(/\s+/);
     const base = parts.length === 1 ? parts[0] : parts[0] + parts[1][0];
@@ -7,14 +12,13 @@ function generateKeyText(title, existingKeys) {
     let counter = 1;
 
     while (existingKeys.has(key)) {
-        key = base + counter; 
-        counter++;            
+        key = base + counter;
+        counter++;
     }
-
     return key;
 }
 
-
+/* ---------------- OPEN DATABASE ---------------- */
 function openDB() {
     return new Promise((resolve, reject) => {
         const request = indexedDB.open("StoreDB", 1);
@@ -35,164 +39,144 @@ function openDB() {
             if (!upgradeDB.objectStoreNames.contains("images")) {
                 upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
             }
+            if (!upgradeDB.objectStoreNames.contains("targetItem")) {
+                upgradeDB.createObjectStore("targetItem", { keyPath: "targetItemId" });
+                console.log("targetItem store created");
+            }
         };
 
         request.onsuccess = (event) => {
             db = event.target.result;
-            console.log("Database opened successfully");
+            console.log("DB opened");
             resolve(db);
         };
 
-        request.onerror = () => {
-            console.error("Database failed to open");
-            reject("Database error");
-        };
+        request.onerror = () => reject("Database error");
     });
 }
 
-openDB().then(() => console.log("All done!"));
-
-function addToCart(product) {
-    const creation = new CartItem(product.title, product.image, product.price, product.keyText);
-
-    const tx = db.transaction(["currentUser"], "readwrite");
-    const store = tx.objectStore("currentUser");
-
-    const req = store.get(1);
-
-    req.onsuccess = () => {
-        const user = req.result;
-        if (!user) {
-            console.error("No current user found in DB.");
-            return;
-        }
-
-        if (!Array.isArray(user.cart)) user.cart = [];
-
-        const exists = user.cart.some(item => item.keyText === creation.keyText);
-
-        if (!exists) {
-            user.cart.push({
-                title: creation.title,
-                image: creation.image,
-                price: creation.price,
-                keyText: creation.keyText,
-                quantity: 1
-            });
-        } else {
-            const existingItem = user.cart.find(item => item.keyText === creation.keyText);
-            if (existingItem) {
-                existingItem.quantity = (existingItem.quantity || 1) + 1;
-                alert("Item quanitity increased, Item quantity: " + existingItem.quantity);
-            }
-        }
-
-        store.put(user);
-    };
-
-    req.onerror = () => console.error("Failed to retrieve user cart");
-}
-
-class MenuItem {
-    constructor({ image, title, description, price, ingredients = [], keyText }) {
-        this.image = image;
-        this.title = title;
-        this.description = description;
-        this.price = price;
-        this.ingredients = ingredients;
-        this.keyText = keyText;
+/* ---------------- CART ITEM ---------------- */
+class MenuItem {//add another one for the food foodType that is either appitizer, main, drink, desert, or kMeal and the creation 
+    //if the change above is done add a checkbox to the admin add form that needs to be checked but when they check it adds the food foodType attribute to the new obj
+    constructor({name, image, description, price, ingredients = [], foodType, keyText} ){
+        this.name = name;
+        this.image = image;               // URL for the image of the item
+        this.description = description;   // Description of the item
+        this.price = price;               // Price value of the item
+        this.ingredients = ingredients;   // Array of ingredient objects
+        this.foodType = foodType;         // optional food foodType (appetizer, main, drink, dessert, kMeal, etc.)
+        this.keyText = keyText;           // generated unique short key for the item
     }
 }
 
 class CartItem {
-    constructor(title, image, price, keyText) {
-        this.title = title;
+    constructor(name, image, price, keyText) {
+        this.name = name;
         this.image = image;
         this.price = price;
-        this.keyText = keyText
+        this.keyText = keyText;
     }
 }
 
-// Build menu items with dynamic keyText
-const rawItems = [
-    { image: "../assets/imgs/burger.jpg", title: "burger", 
-        description: "Juicy beef burger with fresh toppings.", 
-        price: 8.99, 
-        ingredients: [
-        { name: "Beef Patty", quantity: "150g" },
-        { name: "Lettuce", quantity: "2 leaves" },
-        { name: "Cheddar Cheese", quantity: "1 slice" },
-        { name: "Bun", type: "sesame" }
-    ]},
-    { image: "", 
-        title: "pasta", 
-        description: "yumyum pasta", 
-        price: 50.00, 
-        ingredients: [
-        { name: "pasta", quantity: "150g" },
-        { name: "tomato", quantity: "2 slices" },
-        { name: "cheese", quantity: "1 slice" }
-    ]},
-    { image: "", 
-        title: "chicken alfredo", 
-        description: "yumyum chicken alfredo", 
-        price: 1.01, 
-        ingredients: [
-        { name: "chicken", quantity: "150g" },
-        { name: "alfredo sauce", quantity: "500 oz" },
-        { name: "cheese", quantity: "3 slice" }
-    ]}
-];
-
+/* ---------------- PRODUCT FETCH ---------------- */
+const rawItems = [];
 const existingKeys = new Set();
 const menuItems = {};
 
-rawItems.forEach(item => {
-    const keyText = generateKeyText(item.title, existingKeys);
-    existingKeys.add(keyText);
+function fetchProducts() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["products"], "readonly");
+        const store = tx.objectStore("products");
 
-    const menuItem = new MenuItem({ ...item, keyText });
-    menuItems[keyText] = menuItem;
-});
-
-function renderItem(menuItem) {
-    document.getElementById("item-image").src = menuItem.image;
-    document.getElementById("item-name").textContent = menuItem.title;
-    document.getElementById("item-description").textContent = menuItem.description;
-    document.getElementById("item-price").textContent = `$${menuItem.price.toFixed(2)}`;
-
-    const ingredientsList = document.getElementById("item-ingredients");
-    ingredientsList.innerHTML = "";
-
-    menuItem.ingredients.forEach(ingredient => {
-        const li = document.createElement("li");
-        li.textContent = ingredient.quantity
-            ? `${ingredient.name} - ${ingredient.quantity}`
-            : `${ingredient.name} (${ingredient.type})`;
-        ingredientsList.appendChild(li);
+        const req = store.getAll();
+        req.onsuccess = () => {
+            rawItems.push(...req.result);
+            resolve();
+        };
+        req.onerror = () => reject("Failed to load products");
     });
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const btn = document.getElementById("item-button");
-    const itemKey = btn.value;
+/* ---------------- RENDER ITEM ---------------- */
+function renderItem(menuItem) {
+    console.log(menuItem.name);
+    document.getElementById("item-image").src = menuItem.image;
+    document.getElementById("item-name").innerText = menuItem.name;//change here
+    document.getElementById("item-description").textContent = menuItem.description;
+    document.getElementById("item-price").innerText = `$${menuItem.price.toFixed(2)}`;
 
-    const selectedItem = menuItems[itemKey];
+    const ul = document.getElementById("item-ingredients");
+    ul.innerHTML = "";
 
-    if (selectedItem) {
-        renderItem(selectedItem);
-        btn.addEventListener("click", () => {
-            const key = btn.value;
-            const product = menuItems[key];
-            if (!product) return console.error("ERROR: item undefined. Key=", key);
-            addToCart(product);
-        });
-    } else {
-        console.error("Item not found:", itemKey);
-    }
+    menuItem.ingredients.forEach(ing => {
+        const li = document.createElement("li");
+        li.innerText = ing.quantity
+            ? `${ing.name} - ${ing.quantity}`
+            : `${ing.name} (${ing.type})`;
+        ul.appendChild(li);
+    });
+}
+
+/* ---------------- ADD TO CART ---------------- */
+function addToCart(product) {
+    const creation = new CartItem(product.name, product.image, product.price, product.keyText);
+
+    const tx = db.transaction(["currentUser"], "readwrite");
+    const store = tx.objectStore("currentUser");
+    const req = store.get(1);
+
+    req.onsuccess = () => {
+        const user = req.result;
+        if (!user) return console.error("No currentUser in DB");
+
+        user.cart = user.cart || [];
+
+        const existing = user.cart.find(i => i.keyText === creation.keyText);
+
+        if (existing) {
+            existing.quantity++;
+            // alert("Item quantity increased: " + existing.quantity);
+            console.log("Item quantity increased: " + existing.quantity);
+        } else {
+            user.cart.push({ ...creation, quantity: 1 });
+        }
+
+        store.put(user);
+    };
+}
+
+/* ---------------- PAGE START ---------------- */
+document.addEventListener("DOMContentLoaded", async () => {
+    await openDB();
+    await fetchProducts();
+
+    // Build menuItems only ONCE
+    rawItems.forEach(item => {
+        const keyText = generateKeyText(item.name, existingKeys);
+        existingKeys.add(keyText);
+        menuItems[keyText] = new MenuItem({ ...item, keyText });
+    });
+
+    // Get the selected targetItem
+    const tx = db.transaction(["targetItem"], "readonly");
+    const store = tx.objectStore("targetItem");
+
+    const req = store.get(1);
+
+    req.onsuccess = () => {
+        const targetItem = req.result;
+        const keyText = targetItem ? targetItem.keyText : "breadr";
+
+        const itemToRender = menuItems[keyText];
+        if (!itemToRender) {
+            console.error("Item not found:", keyText);
+            return;
+        }
+
+        renderItem(itemToRender);
+
+        document.getElementById("item-button").onclick = () => {
+            addToCart(itemToRender);
+        };
+    };
 });
-
-// document.getElementById("item-button")
-// #881fc9 :Darker
-// #a81bff :Lighter
-// white :White
