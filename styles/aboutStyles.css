@@ -67,7 +67,7 @@ input[type="radio"] {
 .cards-container {
     --base-rotation: 0deg;
     --full-circle: 360deg;
-    --radius: 40vw;
+    --radius: 20vw;
     --duration: 200ms;
     --cards-container-size: calc(var(--radius) * 2);
     --cards-container-padding: 2rem;
@@ -86,8 +86,11 @@ input[type="radio"] {
     --info-offset-y: 30px;
 
     box-sizing: content-box;
-    position: fixed;
-    inset: 0;
+    position: absolute;
+    inset: auto;
+    top: 80%;
+    left: 50%;
+transform: translate(-50%, -50%);
     margin: 5rem auto;
     width: var(--cards-container-size);
     height: var(--cards-container-size);

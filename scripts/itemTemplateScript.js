@@ -1,5 +1,3 @@
-//Add this to gitHUB *change on line 104
-
 //changes made
 
 let db;

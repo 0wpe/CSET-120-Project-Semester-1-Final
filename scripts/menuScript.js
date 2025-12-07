@@ -77,7 +77,6 @@ function createAdminOnStartup() {
                 password: "08162008",
                 email: "admin@restaurant.com",
                 cart: [],
-                orders: [],
                 isAdmin: true
             };
 
@@ -258,7 +257,7 @@ function loadCurrentUserFromDB() {
             const cu = reqCU.result;
             if (!cu) {
                 // Create a default current user if none exists
-                const defaultUser = { id: 1, cart: [] };
+                const defaultUser = { id: 1, username: "guest", cart: [] };
                 const txWrite = db.transaction(["currentUser"], "readwrite");
                 const storeWrite = txWrite.objectStore("currentUser");
                 storeWrite.add(defaultUser);
@@ -280,7 +279,7 @@ function loadCurrentUserFromDB() {
                 if (!userAccount) {
                     console.warn("User account missing.");
                     // Create a default user account
-                    userAccount = { userId: 1, cart: [], orders: [] };
+                    userAccount = { userId: 1, username : "guest", cart: [], };
                     const txWrite = db.transaction(["users"], "readwrite");
                     const storeWrite = txWrite.objectStore("users");
                     storeWrite.add(userAccount);
@@ -683,25 +682,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 0
             );
 
-            const tax = +(subtotal * 0.07).toFixed(2);
+            const tax = +(subtotal * 0.07).toFixed(2);//the plus sign acts like "Number(String)" 
             const total = +(subtotal + tax).toFixed(2);
 
             const receipt = {
                 date: new Date().toISOString(),
-                items: items.map(it => ({
-                    name: it.name,
-                    price: it.price,
-                    quantity: it.quantity || 1,
-                    lineTotal: +(it.price * (it.quantity || 1)).toFixed(2)
+                items: items.map(it => ({//this is an array of items that holds:
+                    name: it.name,//item name
+                    price: it.price,//item price per item
+                    quantity: it.quantity || 1,//quantity of item
+                    lineTotal: +(it.price * (it.quantity || 1)).toFixed(2)//total cost of the quantity of the respective item
                 })),
                 subtotal: +subtotal.toFixed(2),
                 tax,
                 total
             };
 
-            // SAVE TO LOCALSTORAGE SO receipt.html CAN READ IT
-            localStorage.setItem("checkoutReceipt", JSON.stringify(receipt));
+            //saves data to Indexed BD of the user
+            addReciptToUser().then(() => {
 
+            });
+            
             // CLEAR CART IN MEMORY
             items = [];
 
@@ -715,7 +716,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const req = store.get(1);
 
                 req.onsuccess = () => {
-                    const cu = req.result || { id: 1, cart: [] };
+                    const cu = req.result || { id: 1, username : "guest" ,cart: []};
                     cu.cart = [];
                     store.put(cu);
 
@@ -737,36 +738,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-
-// // Scroll-triggered fixed cart
-// const cartBox = document.getElementById("cartBox");
-// const cartInitialTop = cartBox.offsetTop;
-// const offset = 138;
-
-// window.addEventListener("scroll", () => {
-//     const scrollY = window.scrollY || window.pageYOffset;
-
-//     if (scrollY + offset >= cartInitialTop) {
-//         cartBox.classList.add("cart-fixed");
-//     } else {
-//         cartBox.classList.remove("cart-fixed");
-//     }
-// });
-
-// // Scroll-triggered fixed drink-app
-// const drinkBox = document.getElementById("drinkBox");
-// const drinkInitialTop = drinkBox.offsetTop;
-// const Doffset = 138;
-
-// window.addEventListener("scroll", () => {
-//     const scrollY = window.scrollY || window.pageYOffset;
-
-//     if (scrollY + offset >= drinkInitialTop) {
-//         drinkBox.classList.add("drink-app-fixed");
-//     } else {
-//         drinkBox.classList.remove("drink-app-fixed");
-//     }
-// });
+function addReciptToUser(receipt) {
+    new Promise((resolve, reject) => {
+        const tx = db.transaction(["Users"]);        
+    })
+}
 
 function renderDropdownMenu(menuItems) {
     const categories = {
@@ -830,7 +806,6 @@ function displayAdminBtnFN(){
     });
 }
 
-
 // ===============================
 // MARK FIRST RUN EXECUTION
 // ===============================
@@ -845,11 +820,17 @@ openDB().then(() => {
     displayAdminBtnFN().then((currentUser) => {
         const adminBtn = document.getElementById("adminBtn");
         console.log(currentUser);
-        if (currentUser.isAdmin) {//if there is no isAdmin it will be false and if there is an an admin the return will run!
-            adminBtn.style.display = "block";
-        } else {
+        try {
+           if (currentUser.isAdmin) {//if there is no isAdmin it will be false and if there is an an admin the return will run!
+                adminBtn.style.display = "block";
+            } else {
+                adminBtn.style.display = "none"; 
+            } 
+        } catch (error) {
             adminBtn.style.display = "none"; 
+            console.log(error);
         }
+        
     });
     
     const tx = db.transaction(["createFirstMenuList"], "readwrite");
@@ -868,8 +849,7 @@ openDB().then(() => {
                 username: "guest", 
                 userId: 1,
                 cart: [],
-                orders: []
-            };
+                };
             
             const putCurrentUser = storeCurrentUser.put(guestUser);
             
@@ -882,18 +862,26 @@ openDB().then(() => {
                 alert("Failed to logout. Please try again.");
             };
             store.add({ runId: 1, check: true });
+            const loginBtn = document.getElementById("log-in");
+            loginBtn.style.display = "none";
         }
     };
 
     changeLoginText().then((result) =>{
         const loginBtn = document.getElementById("log-in");
+        const ordersBtn = document.getElementById("goPastOrdersBtn");
         console.log(result);        
+        
         if (result) { //result only happens if there is a guest account
+            ordersBtn.style.display = "none";
+
             loginBtn.innerText = "LOGIN";
-            loginBtn.onclick = () => "window.location.href='sign.html'";
-            console.log(result);
-        } else {
-            console.log("result is empty");
+            loginBtn.onclick = () => window.location.href='sign.html';
+            console.log("User is guest");
+        } else { // the user is logged in / registered
+            ordersBtn.style.display = "block";
+
+            console.log("user is logged in");
             loginBtn.innerText = "LOG OUT";       
             loginBtn.onclick = () => {
                 const check = confirm("Confirm that you want to log out of your account.");
@@ -908,9 +896,8 @@ openDB().then(() => {
                         id: 1, 
                         username: "guest", 
                         userId: 1,
-                        cart: [],
-                        orders: []
-                    };
+                        cart: []
+                        };
                     
                     const putCurrentUser = storeCurrentUser.put(guestUser);
                     

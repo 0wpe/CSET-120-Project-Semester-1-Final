@@ -229,6 +229,7 @@ class System {
     /*CHECK IF USER EXISTS*/
     checkUserExists(username) {
         return new Promise((resolve, reject) => {
+            loadUsers();
             const tx = db.transaction(["users"], "readonly");
             const store = tx.objectStore("users");
             const request = store.getAll();
@@ -412,6 +413,16 @@ class System {
             };
         });
     }
+}
+
+function loadUsers() {
+    new Promise((resolve, reject) => {
+        const tx = db.transaction(["users"], "readwrite");
+        const store = tx.objectStore("users");
+
+        store.onsuccess = () => {resolve(store.req)};
+        store.onerror = () => {reject(error)};
+    });
 }
 
 //opening the users indexed DB to let it be timed

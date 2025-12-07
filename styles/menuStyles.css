@@ -596,3 +596,7 @@ header{
 .admin:active {
     transform: scale(0.96);
 }
+
+#goPastOrdersBtn{
+    display: none;
+}

@@ -1,3 +1,51 @@
+let db;
+
+function openDB() {
+    return new Promise((resolve, reject) => {
+        const request = indexedDB.open("StoreDB", 2);
+
+        request.onupgradeneeded = (event) => {
+            const upgradeDB = event.target.result;
+            console.log("Upgrading StoreDB…");
+
+            if (!upgradeDB.objectStoreNames.contains("users")) {
+                upgradeDB.createObjectStore("users", { keyPath: "userId", autoIncrement: true });
+            }
+            if (!upgradeDB.objectStoreNames.contains("currentUser")) {
+                upgradeDB.createObjectStore("currentUser", { keyPath: "id" });
+            }
+            if (!upgradeDB.objectStoreNames.contains("products")) {
+                upgradeDB.createObjectStore("products", { keyPath: "productId", autoIncrement: true });
+            }
+            if (!upgradeDB.objectStoreNames.contains("images")) {
+                upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
+            }
+            // New store for finalized orders (past orders)
+            if (!upgradeDB.objectStoreNames.contains("orders")) {
+                upgradeDB.createObjectStore("orders", { keyPath: "orderId" });
+            }
+            if (!upgradeDB.objectStoreNames.contains("targetItem")) {
+                upgradeDB.createObjectStore("targetItem", { keyPath: "targetItemId" });
+                console.log("targetItem store created");
+            }
+            if (!upgradeDB.objectStoreNames.contains("createFirstMenuList")) {
+                upgradeDB.createObjectStore("createFirstMenuList", { keyPath: "runId" });
+            }
+        };
+
+        request.onsuccess = (event) => {
+            db = event.target.result;
+            console.log("Database opened successfully");
+            resolve(db);
+        };
+
+        request.onerror = () => {
+            console.error("Database failed to open");
+            reject("Database error");
+        };
+    });
+}
+
 function loadReceipt() {
     const raw = localStorage.getItem("checkoutReceipt");
 
