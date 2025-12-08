@@ -1,3 +1,5 @@
+//Add this to gitHUB *change on line 104
+
 //changes made
 
 let db;
@@ -54,16 +56,15 @@ function openDB() {
 }
 
 /* ---------------- CART ITEM ---------------- */
-class MenuItem {//add another one for the food foodType that is either appitizer, main, drink, desert, or kMeal and the creation 
-    //if the change above is done add a checkbox to the admin add form that needs to be checked but when they check it adds the food foodType attribute to the new obj
-    constructor({name, image, description, price, ingredients = [], foodType, keyText} ){
+class MenuItem {
+    constructor({name, image, description, price, ingredients = [], foodType, keyText}) {
         this.name = name;
-        this.image = image;               // URL for the image of the item
-        this.description = description;   // Description of the item
-        this.price = price;               // Price value of the item
-        this.ingredients = ingredients;   // Array of ingredient objects
-        this.foodType = foodType;         // optional food foodType (appetizer, main, drink, dessert, kMeal, etc.)
-        this.keyText = keyText;           // generated unique short key for the item
+        this.image = image;
+        this.description = description;
+        this.price = price;
+        this.ingredients = ingredients;
+        this.foodType = foodType;
+        this.keyText = keyText;
     }
 }
 
@@ -99,7 +100,7 @@ function fetchProducts() {
 function renderItem(menuItem) {
     console.log(menuItem.name);
     document.getElementById("item-image").src = menuItem.image;
-    document.getElementById("item-name").innerText = menuItem.name;//change here
+    document.getElementById("item-name").innerText = menuItem.name;
     document.getElementById("item-description").textContent = menuItem.description;
     document.getElementById("item-price").innerText = `$${menuItem.price.toFixed(2)}`;
 
@@ -113,6 +114,20 @@ function renderItem(menuItem) {
             : `${ing.name} (${ing.type})`;
         ul.appendChild(li);
     });
+}
+
+/* ---------------- POPUP ---------------- */
+function showPopup(message) {
+    const button = document.getElementById("item-button");
+    const wrapper = button.parentElement;
+
+    const popup = document.createElement("div");
+    popup.classList.add("notification");
+    popup.textContent = message;
+
+    wrapper.appendChild(popup);
+
+    setTimeout(() => popup.remove(), 1600);
 }
 
 /* ---------------- ADD TO CART ---------------- */
@@ -133,10 +148,10 @@ function addToCart(product) {
 
         if (existing) {
             existing.quantity++;
-            // alert("Item quantity increased: " + existing.quantity);
-            console.log("Item quantity increased: " + existing.quantity);
+            showPopup("Quantity increased");
         } else {
             user.cart.push({ ...creation, quantity: 1 });
+            showPopup("Item added to cart");
         }
 
         store.put(user);
@@ -148,14 +163,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     await openDB();
     await fetchProducts();
 
-    // Build menuItems only ONCE
     rawItems.forEach(item => {
         const keyText = generateKeyText(item.name, existingKeys);
         existingKeys.add(keyText);
         menuItems[keyText] = new MenuItem({ ...item, keyText });
     });
 
-    // Get the selected targetItem
     const tx = db.transaction(["targetItem"], "readonly");
     const store = tx.objectStore("targetItem");
 

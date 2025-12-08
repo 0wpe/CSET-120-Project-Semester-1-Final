@@ -45,6 +45,7 @@ function openDB() {
         };
     });
 }
+
 //changes - 12/6
 // ===============================
 // CREATE ADMIN ACCOUNT ON STARTUP
@@ -207,6 +208,7 @@ function createProducts() {
         txProducts.onerror = reject;
     });
 }
+
 //change 12/6
 function changeLoginText() {
     return new Promise((resolve, reject) => {
@@ -218,9 +220,9 @@ function changeLoginText() {
             const result = reqG.result;
             const guestUser = result.find(user => user.username === "guest");
             if (guestUser) {
-            resolve(guestUser);
+                resolve(guestUser);
             } else {
-            resolve();
+                resolve();
             }
         };
         reqG.onerror = () => reject(reqG.error);
@@ -228,11 +230,20 @@ function changeLoginText() {
 }
 
 function guestLoading() {
-    return new Promise((resolve, reject)=>{
+    return new Promise((resolve, reject) => {
         const txWrite = db.transaction(["currentUser"], "readwrite");
         const storeWrite = txWrite.objectStore("currentUser");
-        storeWrite.onsuccess = () => resolve(storeWrite);
-        storeWrite.onerror = () => reject(error);
+        const guestUser = {
+            id: 1, 
+            username: "guest", 
+            userId: 1,
+            cart: []
+        };
+        
+        const request = storeWrite.put(guestUser);
+        
+        request.onsuccess = () => resolve();
+        request.onerror = (error) => reject(error);
     });
 }
 
@@ -244,27 +255,34 @@ let userAccount = null;
 
 let items = []; // will mirror userAccount.cart
 
-// new items fn
-function setItemsArray() {
+// NEW: Properly load items from currentUser
+function loadItemsFromCurrentUser() {
     return new Promise((resolve, reject) => {
         const tx = db.transaction(["currentUser"], "readonly");
         const store = tx.objectStore("currentUser");
-        const request = store.get(1); // Adjust key as needed
+        const request = store.get(1); // Get current user (id: 1)
 
         request.onsuccess = () => {
-            const result = request.result;
-            items = result && result.cart ? [...result.cart] : [];
+            const currentUser = request.result;
+            if (currentUser && currentUser.cart) {
+                items = [...currentUser.cart];
+                console.log("Loaded items from currentUser:", items);
+            } else {
+                items = [];
+                console.log("No cart found in currentUser, using empty array");
+            }
             resolve(items);
         };
         
         request.onerror = (event) => {
-            console.error("Error fetching user cart:", event.target.error);
+            console.error("Error fetching currentUser cart:", event.target.error);
             items = [];
             reject(event.target.error);
         };
     });
 }
 
+// FIXED: Properly load user account
 function loadCurrentUserFromDB() {
     return new Promise((resolve, reject) => {
         // STEP 1 – get logged-in user reference
@@ -273,38 +291,52 @@ function loadCurrentUserFromDB() {
         const reqCU = storeCU.get(1);
 
         reqCU.onsuccess = () => {
-            const cu = reqCU.result;
-            if (!cu) {
+            const currentUser = reqCU.result;
+            
+            if (!currentUser) {
                 // Create a default current user if none exists
-                const defaultUser = { id: 1, username: "guest", cart: [] };
+                const defaultUser = { 
+                    id: 1, 
+                    username: "guest", 
+                    userId: 1,
+                    cart: [] 
+                };
+                
                 const txWrite = db.transaction(["currentUser"], "readwrite");
                 const storeWrite = txWrite.objectStore("currentUser");
-                storeWrite.add(defaultUser);
+                const putReq = storeWrite.put(defaultUser);
                 
-                userAccount = defaultUser;
-                items = [];
-                resolve();
+                putReq.onsuccess = () => {
+                    userAccount = defaultUser;
+                    items = [];
+                    console.log("Created default guest user");
+                    resolve();
+                };
+                
+                putReq.onerror = reject;
                 return;
             }
 
-            // STEP 2 – load full user account from "users"
+            // STEP 2 – load full user account from "users" using username
             const txU = db.transaction(["users"], "readonly");
             const storeU = txU.objectStore("users");
-            const reqU = storeU.get(1);
+            const reqU = storeU.getAll();
 
             reqU.onsuccess = () => {
-                userAccount = reqU.result;
-
+                const allUsers = reqU.result;
+                
+                // Find the user by username (not by userId=1)
+                userAccount = allUsers.find(user => user.username === currentUser.username);
+                
                 if (!userAccount) {
-                    console.warn("User account missing.");
-                    // Create a default user account
-                    userAccount = { userId: 1, username : "guest", cart: [], };
-                    const txWrite = db.transaction(["users"], "readwrite");
-                    const storeWrite = txWrite.objectStore("users");
-                    storeWrite.add(userAccount);
+                    console.warn("User account not found for username:", currentUser.username);
+                    // Use currentUser as fallback
+                    userAccount = currentUser;
                 }
 
+                // Load cart from userAccount
                 items = [...(userAccount.cart || [])];
+                console.log("Loaded cart from userAccount:", items);
                 resolve();
             };
 
@@ -315,21 +347,54 @@ function loadCurrentUserFromDB() {
     });
 }
 
-
-
-// Save cart updates to USERS DB
+// Save cart updates to both USERS and currentUser DB
 function saveCartToUserDB() {
     return new Promise((resolve, reject) => {
-        if (!userAccount) return reject("User not loaded.");
+        if (!userAccount) {
+            console.error("User account not loaded, cannot save cart");
+            return reject("User not loaded.");
+        }
 
+        // Update userAccount cart
         userAccount.cart = items;
 
-        const tx = db.transaction(["users"], "readwrite");
-        const store = tx.objectStore("users");
-        const req = store.put(userAccount);
+        // Save to users store
+        const tx = db.transaction(["users", "currentUser"], "readwrite");
+        const usersStore = tx.objectStore("users");
+        const currentUserStore = tx.objectStore("currentUser");
 
-        req.onsuccess = resolve;
-        req.onerror = reject;
+        // Save to users
+        const putUserReq = usersStore.put(userAccount);
+        
+        putUserReq.onsuccess = () => {
+            // Also update currentUser store
+            const getCurrentUserReq = currentUserStore.get(1);
+            
+            getCurrentUserReq.onsuccess = () => {
+                const currentUser = getCurrentUserReq.result || { id: 1 };
+                currentUser.cart = items;
+                if (userAccount.username) currentUser.username = userAccount.username;
+                if (userAccount.userId) currentUser.userId = userAccount.userId;
+                
+                const putCurrentUserReq = currentUserStore.put(currentUser);
+                
+                putCurrentUserReq.onsuccess = () => {
+                    console.log("Cart saved to both users and currentUser");
+                    resolve();
+                };
+                
+                putCurrentUserReq.onerror = reject;
+            };
+            
+            getCurrentUserReq.onerror = reject;
+        };
+
+        putUserReq.onerror = reject;
+        
+        tx.onerror = (event) => {
+            console.error("Transaction error:", event);
+            reject(event);
+        };
     });
 }
 
@@ -375,20 +440,11 @@ function addToCart(product) {
         });
     }
 
+    console.log("Added to cart, new items:", items);
+    
     saveCartToUserDB().then(() => {
         renderCart();
         renderReceipt();
-        
-        // Also update currentUser store for itemTemplateScript.js compatibility
-        const tx = db.transaction(["currentUser"], "readwrite");
-        const store = tx.objectStore("currentUser");
-        const req = store.get(1);
-        
-        req.onsuccess = () => {
-            const currentUser = req.result || { id: 1, cart: [] };
-            currentUser.cart = items;
-            store.put(currentUser);
-        };
     }).catch(error => {
         console.error("Failed to save cart:", error);
     });
@@ -416,9 +472,11 @@ async function loadMenuItems() {
     const pie = document.getElementById("drop-pie");
     const frozen = document.getElementById("drop-frozen");
     const kids = document.getElementById("drop-kids");
-    // if (!grid) return; // If not on menu page, exit
     
-    // grid.innerHTML = "";
+    // Clear existing items
+    [cold, hot, starter, soup, pasta, burger, chicken, beef, seafood, potatoe, vegetable, bread, salad, cake, pie, frozen, kids].forEach(container => {
+        if (container) container.innerHTML = "";
+    });
 
     // Store globally for access in event handlers
     window.loadedMenuItems = menuItems;
@@ -442,62 +500,42 @@ async function loadMenuItems() {
             </div>
         `;
 
-        if(item.foodType=="Cold"){
-          cold.appendChild(card);
-        }
-        else if(item.foodType=="Hot"){
-          hot.appendChild(card);
-        }
-        else if(item.foodType=="Starter"){
-          starter.appendChild(card);
-        }
-        else if(item.foodType=="Soup"){
-          soup.appendChild(card);
-        }
-        else if(item.foodType=="Pasta"){
-          pasta.appendChild(card);
-        }
-        else if(item.foodType=="Burger"){
-          burger.appendChild(card);
-        }
-        else if(item.foodType=="Chicken"){
-          chicken.appendChild(card);
-        }
-        else if(item.foodType=="Beef"){
-          beef.appendChild(card);
-        }
-        else if(item.foodType=="Seafood"){
-          seafood.appendChild(card);
-        }
-        else if(item.foodType=="Potatoe"){
-          potatoe.appendChild(card);
-        }
-        else if(item.foodType=="Vegetable"){
-          vegetable.appendChild(card);
-        }
-        else if(item.foodType=="Bread"){
-          bread.appendChild(card);
-        }
-        else if(item.foodType=="Salad"){
-          salad.appendChild(card);
-        }
-        else if(item.foodType=="Cake"){
-          cake.appendChild(card);
-        }
-        else if(item.foodType=="Pie"){
-          pie.appendChild(card);
-        }
-        else if(item.foodType=="Frozen"){
-          frozen.appendChild(card);
-        }
-        else{
-          kids.appendChild(card);
+        const container = getContainerByFoodType(item.foodType, {
+            cold, hot, starter, soup, pasta, burger, chicken, beef, seafood, 
+            potatoe, vegetable, bread, salad, cake, pie, frozen, kids
+        });
+        
+        if (container) {
+            container.appendChild(card);
         }
     });
 
     // Now attach event handlers
     attachCardClickHandlers(menuItems);
     attachAddToCartBtns(menuItems);
+}
+
+function getContainerByFoodType(foodType, containers) {
+    switch(foodType) {
+        case "Cold": return containers.cold;
+        case "Hot": return containers.hot;
+        case "Starter": return containers.starter;
+        case "Soup": return containers.soup;
+        case "Pasta": return containers.pasta;
+        case "Burger": return containers.burger;
+        case "Chicken": return containers.chicken;
+        case "Beef": return containers.beef;
+        case "Seafood": return containers.seafood;
+        case "Potatoe": return containers.potatoe;
+        case "Vegetable": return containers.vegetable;
+        case "Bread": return containers.bread;
+        case "Salad": return containers.salad;
+        case "Cake": return containers.cake;
+        case "Pie": return containers.pie;
+        case "Frozen": return containers.frozen;
+        case "Kids Menu": return containers.kids;
+        default: return containers.kids; // fallback
+    }
 }
 
 function attachCardClickHandlers(menuItems) {
@@ -569,16 +607,22 @@ function attachAddToCartBtns(menuItems) {
 // ===============================
 function renderCart() {
     const cartContainer = document.getElementById("cartItems");
-    if (!cartContainer) return; // Only render if element exists
+    if (!cartContainer) {
+        console.log("Cart container not found, skipping render");
+        return; // Only render if element exists
+    }
     
     cartContainer.innerHTML = "";
+
+    if (!items || items.length === 0) {
+        cartContainer.innerHTML = '<div class="empty-cart">Your cart is empty</div>';
+        return;
+    }
 
     items.forEach((item, index) => {
         const row = document.createElement("div");
         row.classList.add("cart-row");
-        console.log(item);
         
-
         row.innerHTML = `
             <div class="cart-left">
                 <span class="cart-name">${item.name}</span>
@@ -597,48 +641,74 @@ function renderCart() {
 function attachCartListeners() {
     document.querySelectorAll(".qty-input").forEach(input => {
         input.addEventListener("input", e => {
-            const index = e.target.dataset.index;
+            const index = parseInt(e.target.dataset.index);
             const val = Math.max(1, parseInt(e.target.value) || 1);
 
-            items[index].quantity = val;
+            if (items[index]) {
+                items[index].quantity = val;
 
-            saveCartToUserDB().then(() => {
-                renderCart();
-                renderReceipt();
-            });
+                saveCartToUserDB().then(() => {
+                    renderCart();
+                    renderReceipt();
+                }).catch(error => {
+                    console.error("Failed to save quantity change:", error);
+                });
+            }
         });
     });
 
     document.querySelectorAll(".remove-btn").forEach(btn => {
         btn.addEventListener("click", e => {
-            const index = e.target.dataset.index;
-            items.splice(index, 1);
+            const index = parseInt(e.target.dataset.index);
+            
+            if (items[index]) {
+                items.splice(index, 1);
 
-            saveCartToUserDB().then(() => {
-                renderCart();
-                renderReceipt();
-            });
+                saveCartToUserDB().then(() => {
+                    renderCart();
+                    renderReceipt();
+                }).catch(error => {
+                    console.error("Failed to remove item:", error);
+                });
+            }
         });
     });
 }
 
 function renderReceipt() {
     const container = document.getElementById("receiptItems");
-    if (!container) return; // Only render if element exists
+    if (!container) {
+        console.log("Receipt container not found, skipping render");
+        return; // Only render if element exists
+    }
     
     container.innerHTML = "";
+
+    if (!items || items.length === 0) {
+        const subtotalEl = document.getElementById("subtotal");
+        const taxEl = document.getElementById("tax");
+        const totalEl = document.getElementById("total");
+        
+        if (subtotalEl) subtotalEl.textContent = "0.00";
+        if (taxEl) taxEl.textContent = "0.00";
+        if (totalEl) totalEl.textContent = "0.00";
+        return;
+    }
 
     let subtotal = 0;
 
     items.forEach(item => {
         const row = document.createElement("div");
+        const quantity = item.quantity || 1;
+        const itemTotal = (item.price || 0) * quantity;
+        
         row.innerHTML = `
-            <span>${item.name} (x${item.quantity || 1})</span>
-            <span>${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+            <span>${item.name} (x${quantity})</span>
+            <span>$${itemTotal.toFixed(2)}</span>
         `;
 
         container.appendChild(row);
-        subtotal += (item.price || 0) * (item.quantity || 1);
+        subtotal += itemTotal;
     });
 
     const tax = subtotal * 0.07;
@@ -648,26 +718,31 @@ function renderReceipt() {
     const taxEl = document.getElementById("tax");
     const totalEl = document.getElementById("total");
     
-    if (subtotalEl) subtotalEl.textContent = `${subtotal.toFixed(2)}`;
-    if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `${total.toFixed(2)}`;
+    if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
 }
 
 // ===============================
 // FINAL INITIALIZATION
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
-    // OPEN DATABASE
-    console.log("dom loaded");
+    console.log("DOM loaded, initializing...");
     
     openDB()
         .then(() => {
-            // LOAD USER
+            console.log("Database opened, loading user...");
+            // Load user and cart first
             return loadCurrentUserFromDB();
         })
         .then(() => {
-            // LOAD MENU + CART + RECEIPT
-            loadMenuItems();
+            console.log("User loaded, items:", items);
+            // Now load menu
+            return loadMenuItems();
+        })
+        .then(() => {
+            console.log("Menu loaded, rendering cart and receipt...");
+            // Now render cart and receipt with loaded items
             renderCart();
             renderReceipt();
         })
@@ -675,7 +750,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Failed to initialize:", error);
         });
 
-    // ======= DROPDOWN BUTTON LOGIC (your existing code) =======
+    // ======= DROPDOWN BUTTON LOGIC =======
     document.querySelectorAll(".dropdown-btn").forEach(btn => {
         btn.addEventListener("click", () => {
             const dropdown = btn.parentElement;
@@ -690,7 +765,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (purchaseBtn) {
         purchaseBtn.addEventListener("click", async () => {
-
             // STOP EMPTY CART PURCHASES
             if (!items || items.length === 0) {
                 alert("Your cart is empty.");
@@ -730,33 +804,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 // SAVE EMPTY CART TO DB
                 await saveCartToUserDB();
 
-                // UPDATE currentUser STORE
-                const tx = db.transaction(["currentUser"], "readwrite");
-                const store = tx.objectStore("currentUser");
-                const req = store.get(1);
+                // Re-render cart and receipt to show empty state
+                renderCart();
+                renderReceipt();
 
-                req.onsuccess = () => {
-                    const cu = req.result || { id: 1, username : "guest" ,cart: []};
-                    cu.cart = [];
-                    store.put(cu);
-
-                    // Re-render cart and receipt to show empty state
-                    renderCart();
-                    renderReceipt();
-
-                    // REDIRECT TO RECEIPT PAGE
-                    window.location.href = "receipt.html";
-                };
-
-                req.onerror = () => {
-                    // Even if currentUser fails, still redirect
-                    window.location.href = "receipt.html";
-                };
+                // REDIRECT TO RECEIPT PAGE
+                window.location.href = "receipt.html";
+                
             } catch (err) {
                 console.error("Error clearing cart:", err);
-
-                // STILL REDIRECT – receipt was saved in localStorage
-                window.location.href = "receipt.html";
+                alert("There was an error processing your purchase. Please try again.");
             }
         });
     }
@@ -793,56 +850,6 @@ function addReciptToUser() {
     });
 }
 
-
-function renderDropdownMenu(menuItems) {
-    const categories = {
-        // "Appetizer": document.getElementById("drop-appetizers"),
-        // "Main": document.getElementById("drop-mains"),
-        // "Side": document.getElementById("drop-sides"),
-        // "Drink": document.getElementById("drop-drinks"),
-        // "Dessert": document.getElementById("drop-desserts"),
-        "Kids Menu": document.getElementById("drop-kids"),
-        "Pasta": document.getElementById("drop-pasta"),
-        "Burger": document.getElementById("drop-burger"),
-        "Chicken": document.getElementById("drop-chicken"),
-        "Beef": document.getElementById("drop-beef"),
-        "Seafood": document.getElementById("drop-seafood"),
-        "Potatoe": document.getElementById("drop-potatoes"),
-        "vegetable": document.getElementById("drop-vegetable"),
-        "Bread": document.getElementById("drop-bread"),
-        "Salad": document.getElementById("drop-salad"),
-        "Cold": document.getElementById("drop-cold"),
-        "Hot": document.getElementById("drop-hot"),
-        "Starter": document.getElementById("drop-starter"),
-        "Soup": document.getElementById("drop-soup"),
-    };
-
-    menuItems.forEach((item, index) => {
-        const card = document.createElement("div");
-        card.classList.add("menu-card");
-        card.dataset.keyText = item.keyText;
-        card.dataset.index = index;
-
-        card.innerHTML = `
-            <img src="${item.image}" alt="${item.name}">
-            <div class="menu-card-content">
-                <div class="menu-card-title">${item.name}</div>
-                <div class="menu-card-desc">${item.description}</div>
-                <div class="menu-card-price">${item.price.toFixed(2)}</div>
-                <div class="menu-card-ingredients">
-                    ${item.ingredients.map(i => `<span>${i.name || i}</span>`).join("")}
-                </div>
-                <button class="add-btn" data-index="${index}">Add to Cart</button>
-            </div>
-        `;
-
-        categories[item.foodType].appendChild(card);
-    });
-
-    attachAddToCartBtns(menuItems);
-    attachCardClickHandlers(menuItems);
-}
-
 function displayAdminBtnFN(){
     return new Promise((resolve, reject) => {
         const tx = db.transaction(["currentUser"], "readonly");
@@ -852,7 +859,9 @@ function displayAdminBtnFN(){
         req.onsuccess = () =>{
             const currentUser = req.result;
             resolve(currentUser);
-        }
+        };
+        
+        req.onerror = () => reject(req.error);
     });
 }
 
@@ -860,12 +869,8 @@ function displayAdminBtnFN(){
 // MARK FIRST RUN EXECUTION
 // ===============================
 openDB().then(() => {
+    console.log("Database ready for first run setup");
     
-    // Usage with promise
-    setItemsArray().then(() => {
-        console.log("Items updated:", items);
-    });
-
     // Create admin account on startup
     createAdminOnStartup().then(() => {
         console.log("Admin initialization complete");
@@ -875,18 +880,18 @@ openDB().then(() => {
 
     displayAdminBtnFN().then((currentUser) => {
         const adminBtn = document.getElementById("adminBtn");
-        console.log(currentUser);
-        try {
-           if (currentUser.isAdmin) {//if there is no isAdmin it will be false and if there is an an admin the return will run!
+        console.log("Current user for admin check:", currentUser);
+        if (adminBtn) {
+            if (currentUser && currentUser.isAdmin) {
                 adminBtn.style.display = "block";
             } else {
                 adminBtn.style.display = "none"; 
-            } 
-        } catch (error) {
-            adminBtn.style.display = "none"; 
-            console.log(error);
+            }
         }
-        
+    }).catch(error => {
+        console.error("Error checking admin status:", error);
+        const adminBtn = document.getElementById("adminBtn");
+        if (adminBtn) adminBtn.style.display = "none";
     });
     
     const tx = db.transaction(["createFirstMenuList"], "readwrite");
@@ -895,83 +900,71 @@ openDB().then(() => {
 
     req.onsuccess = () => {
         if (!req.result) {
+            console.log("First run detected, creating products and guest user...");
             createProducts().then(() => console.log("Products created."));
-            guestLoading().then();
-            const txCurrentUser = db.transaction(["currentUser"], "readwrite");
-            const storeCurrentUser = txCurrentUser.objectStore("currentUser");
             
             const guestUser = {
                 id: 1, 
                 username: "guest", 
                 userId: 1,
                 cart: [],
-                };
+            };
             
+            const txCurrentUser = db.transaction(["currentUser"], "readwrite");
+            const storeCurrentUser = txCurrentUser.objectStore("currentUser");
             const putCurrentUser = storeCurrentUser.put(guestUser);
             
             putCurrentUser.onsuccess = () => {
-                console.log("CurrentUser updated to guest");
+                console.log("CurrentUser set to guest");
             };
             
             putCurrentUser.onerror = (error) => {
-                console.error("Error updating currentUser:", error);
-                alert("Failed to logout. Please try again.");
+                console.error("Error setting currentUser to guest:", error);
             };
+            
             store.add({ runId: 1, check: true });
+        } else {
+            console.log("Not first run, skipping product creation");
         }
     };
 
-    changeLoginText().then((result) =>{
+    req.onerror = () => console.error("Failed to check first run.");
+
+    // Handle login text and button states
+    changeLoginText().then((result) => {
         const loginBtn = document.getElementById("log-in");
         const ordersBtn = document.getElementById("goPastOrdersBtn");
-        console.log(result);        
         
-        if (result) { //result only happens if there is a guest account
-            ordersBtn.style.display = "none";
-
-            loginBtn.innerText = "LOGIN";
-            loginBtn.onclick = () => window.location.href='sign.html';
-            console.log("User is guest");
-        } else { // the user is logged in / registered
-            ordersBtn.style.display = "block";
-
-            console.log("user is logged in");
-            loginBtn.innerText = "LOG OUT";       
-            loginBtn.onclick = () => {
-                const check = confirm("Confirm that you want to log out of your account.");
-                console.log(check);
-                if (check) {
-                    // Set currentUser to guest
-                    
-                    const txCurrentUser = db.transaction(["currentUser"], "readwrite");
-                    const storeCurrentUser = txCurrentUser.objectStore("currentUser");
-                    guestLoading().then();
-                    const guestUser = {
-                        id: 1, 
-                        username: "guest", 
-                        userId: 1,
-                        cart: []
-                        };
-                    
-                    const putCurrentUser = storeCurrentUser.put(guestUser);
-                    
-                    putCurrentUser.onsuccess = () => {
-                        console.log("CurrentUser updated to guest");
-                    };
-                    
-                    putCurrentUser.onerror = (error) => {
-                        console.error("Error updating currentUser:", error);
-                        alert("Failed to logout. Please try again.");
-                    };
-                } else {
-                    alert("Log out canceled, you may continue your shopping experience");
-                    return;
-                }
-            };
+        if (loginBtn) {
+            if (result) { //result only happens if there is a guest account
+                if (ordersBtn) ordersBtn.style.display = "none";
+                loginBtn.innerText = "LOGIN";
+                loginBtn.onclick = () => window.location.href='sign.html';
+                console.log("User is guest");
+            } else { // the user is logged in / registered
+                if (ordersBtn) ordersBtn.style.display = "block";
+                console.log("user is logged in");
+                loginBtn.innerText = "LOG OUT";       
+                loginBtn.onclick = () => {
+                    const check = confirm("Confirm that you want to log out of your account.");
+                    console.log(check);
+                    if (check) {
+                        // Set currentUser to guest
+                        guestLoading().then(() => {
+                            console.log("Logged out, set to guest");
+                            window.location.reload();
+                        }).catch(error => {
+                            console.error("Error logging out:", error);
+                            alert("Failed to logout. Please try again.");
+                        });
+                    } else {
+                        alert("Log out canceled, you may continue your shopping experience");
+                        return;
+                    }
+                };
+            }
         }
-        
-
+    }).catch(error => {
+        console.error("Error checking login status:", error);
     });
-
-    req.onerror = () => console.error("Failed to check first run.");
 });

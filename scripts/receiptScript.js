@@ -176,9 +176,36 @@ function displayReceiptInfo() {
     });
     
     // Totals
+    // set base subtotal/tax text (updateTotals will handle tip & total)
+if (currentReceipt.subtotal != null) {
     document.getElementById("r-subtotal").innerText = `$${currentReceipt.subtotal.toFixed(2)}`;
+}
+if (currentReceipt.tax != null) {
     document.getElementById("r-tax").innerText = `$${currentReceipt.tax.toFixed(2)}`;
-    document.getElementById("r-total").innerText = `$${currentReceipt.total.toFixed(2)}`;
+}
+
+// If receipt already has saved tip info (from history), set radio/custom UI so updateTotals can show it
+if (currentReceipt.tipAmount != null) {
+    // prefer saved tipPercent if present
+    if (currentReceipt.tipPercent && currentReceipt.tipPercent !== 'custom') {
+        // programmatically check radio
+        const radio = document.querySelector(`input[name="tip"][value="${currentReceipt.tipPercent}"]`);
+        if (radio) radio.checked = true;
+    } else if (currentReceipt.tipPercent === 'custom' || currentReceipt.tipAmount > 0) {
+        // check custom and fill input
+        const radioCustom = document.querySelector('input[name="tip"][value="custom"]');
+        const customInput = document.getElementById('customTip');
+        if (radioCustom) radioCustom.checked = true;
+        if (customInput) {
+            customInput.style.display = '';
+            customInput.value = currentReceipt.tipAmount.toFixed(2);
+        }
+    }
+}
+
+// Recalculate tip & total (will also update r-total and r-tip)
+updateTotals();
+
     
     // Render customer details section
     if (isNewOrder) {
@@ -193,7 +220,7 @@ function displayReceiptInfo() {
 // ===============================
 function renderEditableForm() {
     const detailsContainer = document.getElementById("customerDetails");
-    
+
     detailsContainer.innerHTML = `
         <div class="customer-details">
             <h2>Complete Your Order</h2>
@@ -223,20 +250,20 @@ function renderEditableForm() {
                 <h3>Card Details</h3>
                 <div class="form-row">
                     <label for="cardName">Name on Card *</label>
-                    <input type="text" id="cardName" placeholder="Exact name on card">
+                    <input type="text" id="cardName" placeholder="Exact name on card" value="${(currentReceipt.card && currentReceipt.card.nameOnCard) || ''}">
                     <div class="error-message" id="cardNameError" style="display: none;">Please enter the name on the card</div>
                 </div>
                 
                 <div class="form-row">
                     <label for="cardNumber">Card Number *</label>
-                    <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456">
+                    <input type="text" id="cardNumber" maxlength="19" placeholder="1234 5678 9012 3456" value="">
                     <div class="error-message" id="cardNumberError" style="display: none;">Please enter a valid card number</div>
                 </div>
                 
                 <div class="form-row" style="display: flex; gap: 15px;">
                     <div style="flex: 1;">
                         <label for="cardExp">Expiry (MM/YY) *</label>
-                        <input type="text" id="cardExp" maxlength="5" placeholder="MM/YY">
+                        <input type="text" id="cardExp" maxlength="5" placeholder="MM/YY" value="${(currentReceipt.card && currentReceipt.card.exp) || ''}">
                         <div class="error-message" id="cardExpError" style="display: none;">Please enter expiry in MM/YY format</div>
                     </div>
                     <div style="flex: 1;">
@@ -246,18 +273,114 @@ function renderEditableForm() {
                     </div>
                 </div>
             </div>
-            
+
+            <!-- TIP SECTION -->
+            <div class="form-row">
+                <label>Tip</label>
+                <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+                    <label><input type="radio" name="tip" value="0" ${(!currentReceipt.tipPercent && (!currentReceipt.tipAmount || currentReceipt.tipAmount === 0)) ? 'checked' : ''}> No tip</label>
+                    <label><input type="radio" name="tip" value="0.10" ${currentReceipt.tipPercent === 0.10 ? 'checked' : ''}> 10%</label>
+                    <label><input type="radio" name="tip" value="0.15" ${currentReceipt.tipPercent === 0.15 ? 'checked' : ''}> 15%</label>
+                    <label><input type="radio" name="tip" value="0.20" ${currentReceipt.tipPercent === 0.20 ? 'checked' : ''}> 20%</label>
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        <input type="radio" name="tip" value="custom" ${currentReceipt.tipPercent === 'custom' ? 'checked' : ''}> Custom
+                        <input type="number" id="customTip" placeholder="Amount" style="width:110px; margin-left:8px; ${currentReceipt.tipPercent === 'custom' ? '' : 'display:none;'}" min="0" step="0.01" value="${currentReceipt.tipAmount ? currentReceipt.tipAmount.toFixed(2) : ''}">
+                    </label>
+                </div>
+                <div style="font-size:12px; color:#666; margin-top:6px;">Tip will be added to your total and saved with the receipt.</div>
+            </div>
+
             <div class="success-message" id="successMessage" style="display: none;">
                 ✓ Order completed successfully! You can now print your receipt.
             </div>
         </div>
     `;
-    
+
     // Setup form validation AFTER the form is rendered
     setTimeout(() => {
         setupFormValidation();
+        setupTipListeners(); // <-- new function to wire tip controls
+        updateTotals();      // <-- ensure totals show the current tip immediately
     }, 100);
 }
+
+// Helper: safely parse numbers
+function toNumber(value) {
+    const n = parseFloat(value);
+    return Number.isFinite(n) ? n : 0;
+}
+
+// Wire tip radio buttons and custom input to recalc totals
+function setupTipListeners() {
+    const tipRadios = document.querySelectorAll('input[name="tip"]');
+    const customTipInput = document.getElementById('customTip');
+
+    if (tipRadios) {
+        tipRadios.forEach(r => {
+            r.addEventListener('change', () => {
+                if (r.value === 'custom') {
+                    customTipInput.style.display = '';
+                    customTipInput.focus();
+                } else if (customTipInput) {
+                    customTipInput.style.display = 'none';
+                }
+                updateTotals();
+            });
+        });
+    }
+
+    if (customTipInput) {
+        customTipInput.addEventListener('input', () => {
+            // ensure non-negative
+            if (customTipInput.value !== '') {
+                customTipInput.value = Math.max(0, toNumber(customTipInput.value)).toFixed(2);
+            }
+            updateTotals();
+        });
+    }
+}
+
+// Recompute tip and update totals display (and currentReceipt fields)
+function updateTotals() {
+    if (!currentReceipt) return;
+
+    const subtotal = toNumber(currentReceipt.subtotal);
+    const tax = toNumber(currentReceipt.tax);
+
+    // Determine selected tip
+    const selected = document.querySelector('input[name="tip"]:checked');
+    let tipAmount = 0;
+    let tipPercent = null;
+
+    if (selected) {
+        if (selected.value === 'custom') {
+            const custom = document.getElementById('customTip');
+            tipAmount = toNumber(custom ? custom.value : 0);
+            tipPercent = 'custom';
+        } else {
+            tipPercent = toNumber(selected.value); // e.g., 0.15
+            tipAmount = Math.round((subtotal * tipPercent) * 100) / 100; // round to cents
+        }
+    }
+
+    // save to receipt (temporary until purchase)
+    currentReceipt.tipAmount = tipAmount;
+    currentReceipt.tipPercent = tipPercent;
+
+    // update totals shown on page
+    const rTip = document.getElementById('r-tip');
+    const rSubtotal = document.getElementById('r-subtotal');
+    const rTax = document.getElementById('r-tax');
+    const rTotal = document.getElementById('r-total');
+
+    if (rSubtotal) rSubtotal.innerText = `$${subtotal.toFixed(2)}`;
+    if (rTax) rTax.innerText = `$${tax.toFixed(2)}`;
+    if (rTip) rTip.innerText = `$${tipAmount.toFixed(2)}`;
+
+    const total = Math.round((subtotal + tax + tipAmount) * 100) / 100;
+    if (rTotal) rTotal.innerText = `$${total.toFixed(2)}`;
+}
+
 
 // ===============================
 // RENDER SAVED DETAILS (FOR COMPLETED ORDERS)

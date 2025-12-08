@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vineyard Tavern - Feedback</title>
+    <link rel="stylesheet" href="styles/topBarStyles.css">
+    <link rel="stylesheet" href="styles/feedbackStyles.css">
+    <link rel="icon" type="image/png" href="assets/imgs/logo.png">
+</head>
+<body>
+    <!-- Top Navigation Bar -->
+    <div class="top-bar">
+        <div class="corner-fill-left"></div>
+        <div class="corner-fill-right"></div>
+        <div class="corner-fill-left2"></div>
+        <div class="corner-fill-right2"></div>
+        <div class="corner-fill-left3"></div>
+        <div class="corner-fill-right3"></div>
+        <div class="icon"></div>
+        <div class="menuTitle weddingday bubble-text">The Vineyard Tavern</div>
+        <div class="menu-selector">
+            <button class="home btn bubble-text" onclick="window.location.href='index.html'">HOME</button>
+            <button class="menu btn bubble-text" onclick="window.location.href='about.html'">ABOUT</button>
+            <button class="special btn bubble-text" onclick="window.location.href='special.html'">SPECIALS</button>
+            <button class="about btn bubble-text" onclick="window.location.href='sign.html'" id="log-in">LOGIN</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="feedback-container">
+        <h1 class="feedback-title">Share Your Experience</h1>
+        
+        <!-- Review Form -->
+        <div class="review-form-container">
+            <h2 class="review-form-title">
+                <i class="fas fa-star"></i> Write a Review
+            </h2>
+            <form id="reviewForm">
+                <div class="form-group">
+                    <label class="form-label">Your Rating *</label>
+                    <div class="star-rating">
+                        <span class="star" data-rating="1">☆</span>
+                        <span class="star" data-rating="2">☆</span>
+                        <span class="star" data-rating="3">☆</span>
+                        <span class="star" data-rating="4">☆</span>
+                        <span class="star" data-rating="5">☆</span>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="reviewerName" class="form-label">Your Name *</label>
+                    <input type="text" id="reviewerName" class="form-input" 
+                           placeholder="Enter your name" 
+                           maxlength="50">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reviewText" class="form-label">Your Review *</label>
+                    <textarea id="reviewText" class="form-textarea" 
+                              placeholder="Share your experience with our food, service, and atmosphere..."
+                              maxlength="1000"></textarea>
+                </div>
+                
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Submit Review
+                </button>
+            </form>
+        </div>
+        
+        <!-- Reviews Display -->
+        <div class="reviews-container">
+            <h2 class="reviews-title">
+                <i class="fas fa-comments"></i> Customer Reviews
+            </h2>
+            <div class="reviews-list">
+                <div class="loading">Loading reviews</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts/feedbackScript.js"></script>
+</body>
+</html>
