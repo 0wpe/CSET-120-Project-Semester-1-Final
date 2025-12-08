@@ -229,7 +229,7 @@ class System {
     /*CHECK IF USER EXISTS*/
     checkUserExists(username) {
         return new Promise((resolve, reject) => {
-            loadUsers();
+            // FIXED: Removed the problematic loadUsers() call
             const tx = db.transaction(["users"], "readonly");
             const store = tx.objectStore("users");
             const request = store.getAll();
@@ -415,13 +415,20 @@ class System {
     }
 }
 
+// FIXED: loadUsers function
 function loadUsers() {
-    new Promise((resolve, reject) => {
-        const tx = db.transaction(["users"], "readwrite");
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["users"], "readonly");
         const store = tx.objectStore("users");
+        const request = store.getAll();
 
-        store.onsuccess = () => {resolve(store.req)};
-        store.onerror = () => {reject(error)};
+        request.onsuccess = () => {
+            resolve(request.result);
+        };
+        
+        request.onerror = () => {
+            reject("Error loading users");
+        };
     });
 }
 

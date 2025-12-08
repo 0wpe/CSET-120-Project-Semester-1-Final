@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Order History - Vineyard Tavern</title>
+        <link rel="icon" type="image/png" href="assets/imgs/logo.png">
+        <link rel="stylesheet" href="styles/topBarStyles.css">
+        <link rel="stylesheet" href="styles/orderHistoryStyles.css">
+    </head>
+
+    <body>
+        <!-- TOP NAVIGATION BAR -->
+        <div class="top-bar">
+            <div class="corner-fill-left"></div>
+            <div class="corner-fill-right"></div>
+            <div class="corner-fill-left2"></div>
+            <div class="corner-fill-right2"></div>
+            <div class="corner-fill-left3"></div>
+            <div class="corner-fill-right3"></div>
+            <div class="icon"></div>
+            <div class="menuTitle weddingday bubble-text">The Vineyard Tavern</div>
+            <div class="menu-selector">
+                <button class="home btn bubble-text" onclick="window.location.href='index.html'">HOME</button>
+                <button class="menu btn bubble-text" onclick="window.location.href='about.html'">ABOUT</button>
+                <button class="special btn bubble-text" onclick="window.location.href='special.html'">SPECIALS</button>
+                <button class="about btn bubble-text" onclick="window.location.href='sign.html'" id="log-in">LOGIN</button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT -->
+        <div class="order-history-container">
+            <h1>Order History</h1>
+            <p class="subtitle">Your past orders</p>
+
+            <!-- FILTERS/SEARCH (Optional) -->
+            <div class="filters">
+                <input type="text" id="searchInput" placeholder="Search by order name or date..." class="search-input">
+                <select id="filterPayment" class="filter-select">
+                    <option value="">All Payment Methods</option>
+                    <option value="Credit Card">Credit Card</option>
+                    <option value="Debit Card">Debit Card</option>
+                    <option value="Cash">Cash</option>
+                    <option value="Gift Card">Gift Card</option>
+                    <option value="Apple Pay">Apple Pay</option>
+                    <option value="Google Pay">Google Pay</option>
+                </select>
+            </div>
+
+            <!-- ORDERS LIST -->
+            <div class="orders-list" id="ordersList">
+                <!-- Orders will be populated here by JavaScript -->
+                <p class="loading">Loading your orders...</p>
+            </div>
+
+            <!-- EMPTY STATE -->
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <h2>No Orders Yet</h2>
+                <p>You haven't placed any orders yet.</p>
+                <a href="index.html" class="btn">Back to Menu</a>
+            </div>
+        </div>
+
+        <!-- MODAL FOR ORDER DETAILS (Optional) -->
+        <div id="orderModal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="closeModal">&times;</span>
+                <div id="modalBody">
+                    <!-- Order details will be populated here -->
+                </div>
+            </div>
+        </div>
+
+        <script src="scripts/orderHistoryScript.js"></script>
+    </body>
+</html>

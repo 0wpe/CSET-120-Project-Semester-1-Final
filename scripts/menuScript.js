@@ -5,7 +5,8 @@ let db;
 
 function openDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open("StoreDB", 2);
+        //change this from 2 to 1
+        const request = indexedDB.open("StoreDB", 1);
 
         request.onupgradeneeded = (event) => {
             const upgradeDB = event.target.result;
@@ -22,10 +23,6 @@ function openDB() {
             }
             if (!upgradeDB.objectStoreNames.contains("images")) {
                 upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
-            }
-            // New store for finalized orders (past orders)
-            if (!upgradeDB.objectStoreNames.contains("orders")) {
-                upgradeDB.createObjectStore("orders", { keyPath: "orderId" });
             }
             if (!upgradeDB.objectStoreNames.contains("targetItem")) {
                 upgradeDB.createObjectStore("targetItem", { keyPath: "targetItemId" });
@@ -244,11 +241,33 @@ function guestLoading() {
 // ===================================================
 let currentUserId = null;
 let userAccount = null;
+
 let items = []; // will mirror userAccount.cart
+
+// new items fn
+function setItemsArray() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["currentUser"], "readonly");
+        const store = tx.objectStore("currentUser");
+        const request = store.get(1); // Adjust key as needed
+
+        request.onsuccess = () => {
+            const result = request.result;
+            items = result && result.cart ? [...result.cart] : [];
+            resolve(items);
+        };
+        
+        request.onerror = (event) => {
+            console.error("Error fetching user cart:", event.target.error);
+            items = [];
+            reject(event.target.error);
+        };
+    });
+}
 
 function loadCurrentUserFromDB() {
     return new Promise((resolve, reject) => {
-        // STEP 1 — get logged-in user reference
+        // STEP 1 – get logged-in user reference
         const txCU = db.transaction(["currentUser"], "readonly");
         const storeCU = txCU.objectStore("currentUser");
         const reqCU = storeCU.get(1);
@@ -268,7 +287,7 @@ function loadCurrentUserFromDB() {
                 return;
             }
 
-            // STEP 2 — load full user account from "users"
+            // STEP 2 – load full user account from "users"
             const txU = db.transaction(["users"], "readonly");
             const storeU = txU.objectStore("users");
             const reqU = storeU.get(1);
@@ -615,7 +634,7 @@ function renderReceipt() {
         const row = document.createElement("div");
         row.innerHTML = `
             <span>${item.name} (x${item.quantity || 1})</span>
-            <span>$${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
+            <span>${((item.price || 0) * (item.quantity || 1)).toFixed(2)}</span>
         `;
 
         container.appendChild(row);
@@ -629,9 +648,9 @@ function renderReceipt() {
     const taxEl = document.getElementById("tax");
     const totalEl = document.getElementById("total");
     
-    if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
-    if (taxEl) taxEl.textContent = `$${tax.toFixed(2)}`;
-    if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
+    if (subtotalEl) subtotalEl.textContent = `${subtotal.toFixed(2)}`;
+    if (taxEl) taxEl.textContent = `${tax.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `${total.toFixed(2)}`;
 }
 
 // ===============================
@@ -639,6 +658,8 @@ function renderReceipt() {
 // ===============================
 document.addEventListener("DOMContentLoaded", () => {
     // OPEN DATABASE
+    console.log("dom loaded");
+    
     openDB()
         .then(() => {
             // LOAD USER
@@ -695,14 +716,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 })),
                 subtotal: +subtotal.toFixed(2),
                 tax,
-                total
+                total,
+                purchased: false  // Mark as unpurchased - needs customer details
             };
 
-            //saves data to Indexed BD of the user
-            addReciptToUser().then(() => {
+            // SAVE TO LOCALSTORAGE FOR RECEIPT PAGE
+            localStorage.setItem("checkoutReceipt", JSON.stringify(receipt));
 
-            });
-            
             // CLEAR CART IN MEMORY
             items = [];
 
@@ -720,6 +740,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     cu.cart = [];
                     store.put(cu);
 
+                    // Re-render cart and receipt to show empty state
+                    renderCart();
+                    renderReceipt();
+
                     // REDIRECT TO RECEIPT PAGE
                     window.location.href = "receipt.html";
                 };
@@ -731,18 +755,44 @@ document.addEventListener("DOMContentLoaded", () => {
             } catch (err) {
                 console.error("Error clearing cart:", err);
 
-                // STILL REDIRECT — receipt was saved in localStorage
+                // STILL REDIRECT – receipt was saved in localStorage
                 window.location.href = "receipt.html";
             }
         });
     }
 });
 
-function addReciptToUser(receipt) {
-    new Promise((resolve, reject) => {
-        const tx = db.transaction(["Users"]);        
-    })
+function addReciptToUser() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["users", "currentUser"], "readwrite");
+        const usersStore = tx.objectStore("users");
+        const currentUserStore = tx.objectStore("currentUser");
+
+        // Must explicitly request data
+        const cuReq = currentUserStore.get(1);
+
+        cuReq.onsuccess = () => {
+            const currentUser = cuReq.result;
+            if (!currentUser) return reject("No current user");
+
+            const usersReq = usersStore.getAll();
+
+            usersReq.onsuccess = () => {
+                const allUsers = usersReq.result;
+                const desiredUser = allUsers.find(u => u.username === currentUser.username);
+
+                console.log("User found:", desiredUser);
+
+                resolve(desiredUser);
+            };
+
+            usersReq.onerror = () => reject(usersReq.error);
+        };
+
+        cuReq.onerror = () => reject(cuReq.error);
+    });
 }
+
 
 function renderDropdownMenu(menuItems) {
     const categories = {
@@ -778,7 +828,7 @@ function renderDropdownMenu(menuItems) {
             <div class="menu-card-content">
                 <div class="menu-card-title">${item.name}</div>
                 <div class="menu-card-desc">${item.description}</div>
-                <div class="menu-card-price">$${item.price.toFixed(2)}</div>
+                <div class="menu-card-price">${item.price.toFixed(2)}</div>
                 <div class="menu-card-ingredients">
                     ${item.ingredients.map(i => `<span>${i.name || i}</span>`).join("")}
                 </div>
@@ -810,6 +860,12 @@ function displayAdminBtnFN(){
 // MARK FIRST RUN EXECUTION
 // ===============================
 openDB().then(() => {
+    
+    // Usage with promise
+    setItemsArray().then(() => {
+        console.log("Items updated:", items);
+    });
+
     // Create admin account on startup
     createAdminOnStartup().then(() => {
         console.log("Admin initialization complete");
@@ -862,8 +918,6 @@ openDB().then(() => {
                 alert("Failed to logout. Please try again.");
             };
             store.add({ runId: 1, check: true });
-            const loginBtn = document.getElementById("log-in");
-            loginBtn.style.display = "none";
         }
     };
 
