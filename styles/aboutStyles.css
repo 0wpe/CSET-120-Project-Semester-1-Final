@@ -20,6 +20,12 @@ body {
     color: var(--color-white);
     overflow: hidden;
     position: relative;
+    border-left:5px solid black;
+    border-right:20px solid black;
+}
+
+.top-bar{
+    margin-right:100px;
 }
 
 /* Starry background */
