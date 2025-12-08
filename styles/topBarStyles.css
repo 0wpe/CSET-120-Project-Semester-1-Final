@@ -51,56 +51,56 @@ body{
     position:absolute;
     width:1.8%;
     height:9%;
-    background:transparent;
+    background:black;
     z-index:6;
-    top:99.5%;
+    top:99.7%;
 }
 
 .top-bar .corner-fill-left{
-    left:-1.1%;
+    left:-1.5%;
 }
 
-.top-bar .corner-fill-right{
-    right:-1%;
+.top-bar .corner-fill-right{ 
+    right:-1.5%;
 }
 
-.top-bar .corner-fill-left2,
+/* .top-bar .corner-fill-left2,
 .top-bar .corner-fill-right2{
     content:"";
     position:absolute;
     width:1%;
     height:26%;
     background:transparent;
-    /* z-index:6; */
+    /* z-index:6;
     top:99%;
-}
+} */
 
-.top-bar .corner-fill-left2{
+/* .top-bar .corner-fill-left2{
     left:-1.9%;
 }
 
 .top-bar .corner-fill-right2{
     right:-1.9%;
-}
+} */
 
-.top-bar .corner-fill-left3,
+/* .top-bar .corner-fill-left3,
 .top-bar .corner-fill-right3{
     content:"";
     position:absolute;
     width:1%;
     height:10%;
-    background:black;
+    background:purple;
     /* z-index:5; */
-    top:99%;
-}
+    /* top:99%;
+} */
 
-.top-bar .corner-fill-left3{
+/* .top-bar .corner-fill-left3{
     left:-1.2%;
 }
 
 .top-bar .corner-fill-right3{
     right:-1.2%;
-}
+} */
 
 .icon{
     margin-top:0.6%;

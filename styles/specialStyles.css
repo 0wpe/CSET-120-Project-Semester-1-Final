@@ -19,12 +19,14 @@ body {
     flex-direction: column;
     align-items: center;
     overflow-x: hidden;
+    border:5px solid black;
 }
 
 .container {
     width: 100%;
     padding: 2rem 1.5rem;
     background:rgb(245, 245, 245);
+    padding-top:60px;
 }
 
 h1.menu {

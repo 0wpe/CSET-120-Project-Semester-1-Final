@@ -325,29 +325,27 @@ header{
 }
 
 .footer{
-    margin:0px auto auto auto;
-    height:20vh;
-    width:100%;
-    background-color:rgb(245, 245, 245);
-    margin-top:10px;
-    overflow:hidden;
-    position: relative;/* new */
+    margin: 0 auto;
+    width: 100%;
+    background-color: rgb(245, 245, 245);
+    margin-top: 10px;
+    position: relative;
+    padding: 40px 20px;;
 }
 
 .footer-content{
-    width: 55%;
-    display: flex;
-    justify-content: space-around;
-    /* flex-wrap: wrap; */
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    align-items: start;
     gap: 40px;
-    padding:25px;
 }
 
 /* LEFT SECTION */
+.footer-signup { text-align: left; }
 .footer-signup h2{
-    width:25vw;
     font-size: 28px;
-    /* padding-left: 500px; */
 }
 
 .footer-signup p{
@@ -366,7 +364,7 @@ header{
 .footer-form input{
     padding: 10px;
     border-radius: 4px;
-    border: none;
+    border: 1px solid #ddd;
     width: 200px;
 }
 
@@ -383,30 +381,30 @@ header{
 }
 
 .footer-small{
-    width: 90%;
-    font-size: 11px;
-    color: white;
+    max-width: 600px;
+    font-size: 0.9rem;
+    color: #666;
     line-height: 1.4;
 }
 
 .footer-socials{
-    margin-top: 20px;
+    margin-top: 12px;
     display: flex;
-    gap: 20px;
+    gap: 14px;
     font-size: 22px;
 }
 
 /* RIGHT LINKS SECTION */
 .footer-links{
-    display: flex;
-    gap: 60px;
-    margin-top:30px;
-    margin-left:80px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(140px, 1fr));
+    gap: 24px;
+    margin-top: 10px;
 }
 
 .footer-links h4{
     font-size: 14px;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     letter-spacing: 1px;
 }
 
@@ -414,7 +412,7 @@ header{
     display: block;
     color: rgb(83, 83, 83);
     font-size: 13px;
-    margin: 4px 0;
+    margin: 6px 0;
     text-decoration: none;
 }
 
@@ -424,6 +422,15 @@ header{
 
 #facebook{
     font-size:30px;
+}
+
+/* Responsive behavior for footer layout (Option 2) */
+@media (max-width: 900px) {
+    .footer-content { grid-template-columns: 1fr; }
+    .footer-signup { text-align: center; }
+    .footer-socials { justify-content: center; }
+    .footer-small { margin: 0 auto; }
+    .footer-links { text-align: center; }
 }
 
 .menu-dropdowns {
