@@ -21,7 +21,7 @@
             <button class="home btn bubble-text" onclick="window.location.href='index.html'">HOME</button>
             <button class="menu btn bubble-text" onclick="window.location.href='about.html'">ABOUT</button>
             <button class="special btn bubble-text" onclick="window.location.href='special.html'">SPECIALS</button>
-            <button class="about btn bubble-text" onclick="window.location.href='sign.html'" id="log-in">LOGIN</button>
+            <button class="about btn bubble-text" onclick="window.location.href='sign.html'" id="log-in">LOGOUT</button>
         </div>
     </div>
 
@@ -34,6 +34,22 @@
             <h2 class="review-form-title">
                 <i class="fas fa-star"></i> Write a Review
             </h2>
+            
+            <!-- Current User Display -->
+            <div class="current-user-display">
+                <div class="current-user-avatar">U</div>
+                <div class="current-user-info">
+                    <h3>Loading...</h3>
+                    <p>Checking user status...</p>
+                </div>
+            </div>
+            
+            <!-- Guest Warning -->
+            <div class="guest-warning" style="display: none;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>You are currently signed in as a guest. Please <a>log in</a> to submit a review.</span>
+            </div>
+            
             <form id="reviewForm">
                 <div class="form-group">
                     <label class="form-label">Your Rating *</label>
@@ -47,20 +63,16 @@
                 </div>
                 
                 <div class="form-group">
-                    <label for="reviewerName" class="form-label">Your Name *</label>
-                    <input type="text" id="reviewerName" class="form-input" 
-                           placeholder="Enter your name" 
-                           maxlength="50">
+                    <label for="reviewText" class="form-label">Your Review * (Max 250 characters)</label>
+                    <div class="char-counter-container">
+                        <textarea id="reviewText" class="form-textarea" 
+                                placeholder="Share your experience with our food, service, and atmosphere..."
+                                maxlength="250"></textarea>
+                        <div class="char-counter">0/250</div>
+                    </div>
                 </div>
                 
-                <div class="form-group">
-                    <label for="reviewText" class="form-label">Your Review *</label>
-                    <textarea id="reviewText" class="form-textarea" 
-                              placeholder="Share your experience with our food, service, and atmosphere..."
-                              maxlength="1000"></textarea>
-                </div>
-                
-                <button type="submit" class="submit-btn">
+                <button type="submit" class="submit-btn" disabled>
                     <i class="fas fa-paper-plane"></i> Submit Review
                 </button>
             </form>

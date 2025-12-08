@@ -79,9 +79,9 @@ input[type="radio"] {
     --radius: 20vw;
     --duration: 200ms;
     --cards-container-size: calc(var(--radius) * 2);
-    --cards-container-padding: 2rem;
+    --cards-container-padding: 2rem;/* changed from 2.0 to 1.7 // 1.7 makes it cut off 2 looks right*/
     --border-color: var(--color-light);
-      --label-offset: calc(var(--radius) * -1 - 0.8rem);
+    --label-offset: calc(var(--radius) * -1 - 0.6rem);
     --label-size: 30px;
     --label-color: var(--color-white);
     --label-color-hover: var(--color-light);
@@ -117,7 +117,7 @@ transform: translate(-50%, -50%);
         --radius: 30vw;
         --label-size: 40px;
         --label-dot-size: 15px;
-        --label-line-h-current: 4rem;
+        --label-line-h-current: 3.5rem;
         --title-top: 4rem;
         --info-top: 8rem;
     }

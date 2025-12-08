@@ -1,4 +1,4 @@
-//Add this to gitHUB
+// Add this to gitHUB
 
 // IndexedDB integration for Add Form
 let db;
@@ -117,7 +117,7 @@ function initializeDatabase() {
                 upgradeDB.createObjectStore("products", { keyPath: "productId", autoIncrement: true });
             }
             if (!upgradeDB.objectStoreNames.contains("images")) {
-                upgradeDB.createObjectStore("images", { keyPath: "image", autoIncrement: true });
+                upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
             }
         };
         
@@ -219,27 +219,148 @@ async function handleFormSubmit(e) {
     showLoading(true);
     
     try {
-        // Prepare product data
+        // Get form values
+        const name = document.getElementById('itemName').value.trim();
+        const description = document.getElementById('itemDescription').value.trim();
+        const price = parseFloat(document.getElementById('itemPrice').value);
+        const type = document.getElementById('itemType').value;
+        
+        // Prepare product data - match the structure from menuScript.js
         const productData = {
-            name: document.getElementById('itemName').value.trim(),
-            description: document.getElementById('itemDescription').value.trim(),
-            price: parseFloat(document.getElementById('itemPrice').value),
-            type: document.getElementById('itemType').value,
+            name: name,
+            description: description,
+            price: price,
+            foodType: type, // Changed from 'type' to 'foodType' to match menuScript
+            ingredients: [], // Empty array by default
+            keyText: generateKeyText(name), // Generate keyText like menuScript
             createdAt: new Date().toISOString()
         };
         
-        // Store image if available
+        // Handle image - store as data URL directly in product
         if (currentImage.dataUrl) {
-            const image = await storeImage(currentImage);
-            productData.image = image;
-            productData.hasImage = true;
+            // Store image as data URL directly in the product
+            productData.image = currentImage.dataUrl;
+        } else {
+            // Use default image based on type
+            productData.image = getDefaultImageForType(type);
         }
         
         // Save product to IndexedDB
         const productId = await saveProduct(productData);
         
         // Show success message
-        showMessage(`Item "${productData.name}" added successfully! (ID: ${productId})`, 'success');
+        showMessage(`Item "${productData.name}" added successfully!`, 'success');
+        
+        // Clear form
+        clearForm();
+        
+        // Reload recent items
+        await loadRecentItems();
+        
+    } catch (error) {
+        console.error('Error adding item:', error);
+        showMessage('Error adding item. Please try again.', 'error');
+    } finally {
+        // Hide loading
+        showLoading(false);
+    }
+}
+
+// Generate keyText function (similar to menuScript.js)
+function generateKeyText(name, existingKeys = new Set()) {
+    const parts = name.trim().toLowerCase().split(/\s+/);
+    const base = parts.length === 1 ? parts[0] : parts[0] + (parts[1] ? parts[1][0] : '');
+    
+    let key = base;
+    let counter = 1;
+    
+    // We'll get existing keys from the database to ensure uniqueness
+    return new Promise((resolve) => {
+        if (!db) {
+            resolve(key);
+            return;
+        }
+        
+        const tx = db.transaction(["products"], "readonly");
+        const store = tx.objectStore("products");
+        const request = store.getAll();
+        
+        request.onsuccess = () => {
+            const existingProducts = request.result || [];
+            const existingKeysSet = new Set(existingProducts.map(p => p.keyText));
+            
+            while (existingKeysSet.has(key)) {
+                key = base + counter;
+                counter++;
+            }
+            
+            resolve(key);
+        };
+        
+        request.onerror = () => {
+            resolve(key); // Fallback if we can't check
+        };
+    });
+}
+
+// Modified handleFormSubmit to use async keyText generation
+async function handleFormSubmit(e) {
+    e.preventDefault();
+    
+    // Check if database is initialized
+    if (!dbInitialized) {
+        try {
+            await initializeDatabase();
+            dbInitialized = true;
+        } catch (error) {
+            showMessage('Database not available. Please refresh the page.', 'error');
+            return;
+        }
+    }
+    
+    // Validate form
+    if (!validateForm()) {
+        return;
+    }
+    
+    // Show loading
+    showLoading(true);
+    
+    try {
+        // Get form values
+        const name = document.getElementById('itemName').value.trim();
+        const description = document.getElementById('itemDescription').value.trim();
+        const price = parseFloat(document.getElementById('itemPrice').value);
+        const type = document.getElementById('itemType').value;
+        
+        // Generate unique keyText
+        const keyText = await generateKeyText(name);
+        
+        // Prepare product data - match the structure from menuScript.js
+        const productData = {
+            name: name,
+            description: description,
+            price: price,
+            foodType: type, // Changed from 'type' to 'foodType' to match menuScript
+            ingredients: [], // Empty array by default
+            keyText: keyText, // Generated keyText
+            createdAt: new Date().toISOString()
+        };
+        
+        // Handle image - store as data URL directly in product
+        if (currentImage.dataUrl) {
+            // Store image as data URL directly in the product
+            productData.image = currentImage.dataUrl;
+        } else {
+            // Use default image based on type
+            productData.image = getDefaultImageForType(type);
+        }
+        
+        // Save product to IndexedDB
+        const productId = await saveProduct(productData);
+        
+        // Show success message
+        showMessage(`Item "${productData.name}" added successfully!`, 'success');
         
         // Clear form
         clearForm();
@@ -314,39 +435,6 @@ async function saveProduct(productData) {
     });
 }
 
-async function storeImage(imageData) {
-    return new Promise((resolve, reject) => {
-        if (!db) {
-            reject(new Error('Database not initialized'));
-            return;
-        }
-        
-        const tx = db.transaction(["images"], "readwrite");
-        const store = tx.objectStore("images");
-        
-        const imageRecord = {
-            dataUrl: imageData.dataUrl,
-            name: imageData.name,
-            type: imageData.file.type,
-            size: imageData.file.size,
-            uploadedAt: new Date().toISOString()
-        };
-        
-        const request = store.add(imageRecord);
-        
-        request.onsuccess = (e) => {
-            const image = e.target.result;
-            console.log('Image saved with ID:', image);
-            resolve(image);
-        };
-        
-        request.onerror = (err) => {
-            console.error('Error saving image:', err);
-            reject(err);
-        };
-    });
-}
-
 async function loadRecentItems() {
     // Don't try to load if database isn't initialized
     if (!dbInitialized || !db) {
@@ -373,26 +461,18 @@ async function loadRecentItems() {
             const itemCard = document.createElement('div');
             itemCard.className = 'recent-item-card';
             
-            // Get image if available
-            let imageUrl = getDefaultImageForType(product.type);
-            if (product.image) {
-                try {
-                    const image = await getImage(product.image);
-                    if (image && image.dataUrl) {
-                        imageUrl = image.dataUrl;
-                    }
-                } catch (error) {
-                    console.warn('Could not load image for product:', product.productId);
-                }
-            }
+            // Get image - now stored directly in product.image as data URL
+            let imageUrl = product.image || getDefaultImageForType(product.foodType || product.type);
             
             const price = formatPrice(product.price);
+            const name = product.name || 'Unnamed Item';
+            const foodType = product.foodType || product.type || 'Uncategorized';
             
             itemCard.innerHTML = `
-                <img src="${product.image}" alt="${product.name}" class="recent-item-image" onerror="this.src='${getDefaultImageForType(product.type)}'">
+                <img src="${imageUrl}" alt="${name}" class="recent-item-image" onerror="this.src='${getDefaultImageForType(foodType)}'">
                 <div class="recent-item-details">
-                    <div class="recent-item-name">${product.name}</div>
-                    <div class="recent-item-type">${product.type}</div>
+                    <div class="recent-item-name">${name}</div>
+                    <div class="recent-item-type">${foodType}</div>
                     <div class="recent-item-price">${price}</div>
                 </div>
             `;
@@ -427,35 +507,25 @@ function getRecentProducts() {
     });
 }
 
-function getImage(image) {
-    return new Promise((resolve, reject) => {
-        if (!db) {
-            reject(new Error('Database not initialized'));
-            return;
-        }
-        
-        const tx = db.transaction(["images"], "readonly");
-        const store = tx.objectStore("images");
-        const request = store.get(image);
-        
-        request.onsuccess = () => {
-            resolve(request.result);
-        };
-        
-        request.onerror = (err) => {
-            reject(err);
-        };
-    });
-}
-
 function getDefaultImageForType(type) {
     const defaultImages = {
-        'Appetizer': 'https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80',
-        'Side': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80',
-        'Main': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80',
-        'Drink': 'https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80',
-        'Dessert': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80',
-        'Kids Menu': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80'
+        'Cold': 'assets/imgs/default-cold.jpg',
+        'Hot': 'assets/imgs/default-hot.jpg',
+        'Starter': 'assets/imgs/default-starter.jpg',
+        'Soup': 'assets/imgs/default-soup.jpg',
+        'Pasta': 'assets/imgs/default-pasta.jpg',
+        'Burger': 'assets/imgs/default-burger.jpg',
+        'Chicken': 'assets/imgs/default-chicken.jpg',
+        'Beef': 'assets/imgs/default-beef.jpg',
+        'Seafood': 'assets/imgs/default-seafood.jpg',
+        'Potatoe': 'assets/imgs/default-potato.jpg',
+        'Vegetable': 'assets/imgs/default-vegetable.jpg',
+        'Bread': 'assets/imgs/default-bread.jpg',
+        'Salad': 'assets/imgs/default-salad.jpg',
+        'Cake': 'assets/imgs/default-cake.jpg',
+        'Pie': 'assets/imgs/default-pie.jpg',
+        'Frozen': 'assets/imgs/default-frozen.jpg',
+        'Kids Menu': 'assets/imgs/default-kids.jpg'
     };
     
     return defaultImages[type] || 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&h=200&q=80';
@@ -535,3 +605,35 @@ function showLoading(show) {
         }
     }
 }
+
+// Add CSS for loading overlay
+const style = document.createElement('style');
+style.textContent = `
+    .loading-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+    }
+    
+    .loading-overlay .loading-spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #4A9DEC;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+`;
+document.head.appendChild(style);

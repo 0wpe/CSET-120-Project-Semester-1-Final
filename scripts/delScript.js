@@ -1,48 +1,62 @@
-// IndexedDB integration
+// delScript.js - Updated to work with menuScript.js context
+
+// IndexedDB integration (will reuse the same db from menuScript)
 let db;
 
-// UI Elements (will be initialized when DOM is loaded)
+// UI Elements
 let itemsGrid, emptyState, loadingIndicator, selectedCountEl, bulkDeleteBtn, emptyStateText, addItemLink;
 let selectedItems = new Set();
 
-// Default images for different food types
+// Food type mapping from menuScript
+const foodTypeMapping = {
+    'Cold': 'Cold',
+    'Hot': 'Hot', 
+    'Starter': 'Starter',
+    'Soup': 'Soup',
+    'Pasta': 'Pasta',
+    'Burger': 'Burger',
+    'Chicken': 'Chicken',
+    'Beef': 'Beef',
+    'Seafood': 'Seafood',
+    'Potatoe': 'Potatoe',
+    'Vegetable': 'Vegetable',
+    'Bread': 'Bread',
+    'Salad': 'Salad',
+    'Cake': 'Cake',
+    'Pie': 'Pie',
+    'Frozen': 'Frozen',
+    'Kids Menu': 'Kids Menu'
+};
+
+// Default images for different food types (using relative paths)
 const defaultImages = {
-    'Appetizer': 'https://images.unsplash.com/photo-1546793665-c74683f339c1?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80',
-    'Side': 'https://images.unsplash.com/photo-1573080496219-bb080dd4f877?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80',
-    'Main': 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80',
-    'Drink': 'https://images.unsplash.com/photo-1561047029-3000c68339ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80',
-    'Dessert': 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80',
-    'Kids Menu': 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&h=400&q=80'
+    'Cold': 'assets/imgs/default-cold.jpg',
+    'Hot': 'assets/imgs/default-hot.jpg',
+    'Starter': 'assets/imgs/default-starter.jpg',
+    'Soup': 'assets/imgs/default-soup.jpg',
+    'Pasta': 'assets/imgs/default-pasta.jpg',
+    'Burger': 'assets/imgs/default-burger.jpg',
+    'Chicken': 'assets/imgs/default-chicken.jpg',
+    'Beef': 'assets/imgs/default-beef.jpg',
+    'Seafood': 'assets/imgs/default-seafood.jpg',
+    'Potatoe': 'assets/imgs/default-potato.jpg',
+    'Vegetable': 'assets/imgs/default-vegetable.jpg',
+    'Bread': 'assets/imgs/default-bread.jpg',
+    'Salad': 'assets/imgs/default-salad.jpg',
+    'Cake': 'assets/imgs/default-cake.jpg',
+    'Pie': 'assets/imgs/default-pie.jpg',
+    'Frozen': 'assets/imgs/default-frozen.jpg',
+    'Kids Menu': 'assets/imgs/default-kids.jpg'
 };
 
 function openDB() {
     return new Promise((resolve, reject) => {
+        // Use the same database as menuScript
         const request = indexedDB.open("StoreDB", 1);
-
-        request.onupgradeneeded = (event) => {
-            const upgradeDB = event.target.result;
-            console.log("Upgrading StoreDB…");
-
-            if (!upgradeDB.objectStoreNames.contains("users")) {
-                upgradeDB.createObjectStore("users", { keyPath: "userId", autoIncrement: true });
-            }
-            if (!upgradeDB.objectStoreNames.contains("currentUser")) {
-                upgradeDB.createObjectStore("currentUser", { keyPath: "id" });
-            }
-            if (!upgradeDB.objectStoreNames.contains("products")) {
-                upgradeDB.createObjectStore("products", { keyPath: "productId", autoIncrement: true });
-            }
-            if (!upgradeDB.objectStoreNames.contains("images")) {
-                upgradeDB.createObjectStore("images", { keyPath: "imageId", autoIncrement: true });
-            }
-            if (!upgradeDB.objectStoreNames.contains("createFirstMenuList")) {
-                upgradeDB.createObjectStore("createFirstMenuList", { keyPath: "runId" });
-            }
-        };
 
         request.onsuccess = (event) => {
             db = event.target.result;
-            console.log("Database opened successfully");
+            console.log("Database opened successfully from delScript");
             resolve(db);
         };
 
@@ -114,7 +128,18 @@ function getAllProducts() {
         const req = store.getAll();
 
         req.onsuccess = () => {
-            resolve(req.result);
+            // Transform data to match menuScript structure
+            const products = req.result.map(item => ({
+                productId: item.productId,
+                name: item.name,
+                image: item.image,
+                description: item.description,
+                price: item.price,
+                ingredients: item.ingredients || [],
+                foodType: item.foodType || 'Uncategorized',
+                keyText: item.keyText || generateKeyText(item.name)
+            }));
+            resolve(products);
         };
 
         req.onerror = (err) => {
@@ -123,20 +148,35 @@ function getAllProducts() {
     });
 }
 
+// Helper function from menuScript
+function generateKeyText(name, existingKeys = new Set()) {
+    const parts = name.trim().toLowerCase().split(/\s+/);
+    const base = parts.length === 1 ? parts[0] : parts[0] + (parts[1] ? parts[1][0] : '');
+    
+    let key = base;
+    let counter = 1;
+    
+    while (existingKeys.has(key)) {
+        key = base + counter;
+        counter++;
+    }
+    
+    return key;
+}
+
 function getImageForProduct(product) {
-    // Check if product has image data or URL
-    if (product.image) {
+    // Use product image if available
+    if (product.image && product.image.startsWith('assets/')) {
         return product.image;
     }
     
-    // Check if product has imageId that references the images store
-    if (product.image) {
-        // In a real implementation, you'd fetch from images store
-        return defaultImages[product.type] || getDefaultImage();
+    // Try to use default image based on foodType
+    if (product.foodType && defaultImages[product.foodType]) {
+        return defaultImages[product.foodType];
     }
     
-    // Use default image based on type
-    return defaultImages[product.type] || getDefaultImage();
+    // Fallback to a generic default
+    return getDefaultImage();
 }
 
 function getDefaultImage() {
@@ -150,9 +190,8 @@ function formatPrice(price) {
         return `$${price.toFixed(2)}`;
     }
     
-    // If it's already a string, check if it starts with $
     if (typeof price === 'string') {
-        return price.startsWith('$') ? price : `$${price}`;
+        return price.startsWith('$') ? price : `$${parseFloat(price).toFixed(2)}`;
     }
     
     return '$0.00';
@@ -176,13 +215,12 @@ function setupEventListeners() {
         });
     });
     
-    // Home button
+    // Home button - update to match your actual home page
     const homeBtn = document.querySelector('.home-btn');
     if (homeBtn) {
         homeBtn.addEventListener('click', function(e) {
             e.preventDefault();
-            // alert('Navigating to Home page');
-            // In a real app, redirect to home
+            window.location.href = '../index.html';
         });
     }
     
@@ -195,12 +233,15 @@ async function handleBulkDelete() {
     
     const productIds = Array.from(selectedItems);
     
-    if (confirm(`Are you sure you want to delete ${selectedItems.size} item(s)?`)) {
+    if (confirm(`Are you sure you want to delete ${selectedItems.size} item(s)? This action cannot be undone.`)) {
         try {
             bulkDeleteBtn.disabled = true;
             bulkDeleteBtn.textContent = "Deleting...";
             
             await deleteMultipleProducts(productIds);
+            
+            // Also remove from currentUser carts if they contain these items
+            await removeFromAllUserCarts(productIds);
             
             // Remove selected items from UI
             selectedItems.clear();
@@ -220,6 +261,39 @@ async function handleBulkDelete() {
     }
 }
 
+// Remove deleted items from all user carts
+async function removeFromAllUserCarts(productIds) {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["users"], "readwrite");
+        const store = tx.objectStore("users");
+        const req = store.getAll();
+        
+        req.onsuccess = () => {
+            const users = req.result;
+            users.forEach(user => {
+                if (user.cart && Array.isArray(user.cart)) {
+                    // Filter out deleted items
+                    user.cart = user.cart.filter(item => {
+                        // Check if item has productId or keyText that matches deleted items
+                        const itemKey = item.productId || item.keyText;
+                        return !productIds.some(id => 
+                            id === itemKey || id === item.productId
+                        );
+                    });
+                    
+                    // Update user in database
+                    const updateTx = db.transaction(["users"], "readwrite");
+                    const updateStore = updateTx.objectStore("users");
+                    updateStore.put(user);
+                }
+            });
+            resolve();
+        };
+        
+        req.onerror = reject;
+    });
+}
+
 async function loadProducts() {
     try {
         const products = await getAllProducts();
@@ -230,6 +304,7 @@ async function loadProducts() {
         if (products.length === 0) {
             itemsGrid.style.display = 'none';
             emptyState.style.display = 'block';
+            emptyStateText.textContent = "No items found in the database.";
             return;
         }
         
@@ -244,9 +319,11 @@ async function loadProducts() {
             const itemCard = document.createElement('div');
             itemCard.className = 'item-card';
             itemCard.dataset.id = product.productId;
+            itemCard.dataset.keyText = product.keyText;
             
             const imageUrl = getImageForProduct(product);
             const price = formatPrice(product.price);
+            const foodType = product.foodType || 'Uncategorized';
             
             itemCard.innerHTML = `
                 <input type="checkbox" class="select-checkbox" data-id="${product.productId}">
@@ -254,8 +331,13 @@ async function loadProducts() {
                 <div class="item-details">
                     <div class="item-name">${product.name || 'Unnamed Item'}</div>
                     <div class="item-description">${product.description || 'No description available'}</div>
-                    <div class="item-type">${product.type || 'Uncategorized'}</div>
+                    <div class="item-type">${foodType}</div>
                     <div class="item-price">${price}</div>
+                    <div class="item-ingredients">
+                        ${product.ingredients.map(ing => 
+                            `<span class="ingredient-tag">${ing.name || ing}</span>`
+                        ).join('')}
+                    </div>
                     <button class="delete-btn" data-id="${product.productId}">Delete Item</button>
                 </div>
             `;
@@ -289,7 +371,9 @@ async function loadProducts() {
         emptyState.style.display = 'block';
         emptyStateText.textContent = "Error loading items from database.";
         addItemLink.textContent = "Retry";
-        addItemLink.onclick = () => {
+        addItemLink.href = "#";
+        addItemLink.onclick = (e) => {
+            e.preventDefault();
             addItemLink.textContent = "Go to Add Items";
             addItemLink.href = "adminForm.html";
             loadData();
@@ -303,12 +387,15 @@ async function handleSingleDelete(event) {
     const itemCard = button.closest('.item-card');
     const itemName = itemCard.querySelector('.item-name').textContent;
     
-    if (confirm(`Are you sure you want to delete "${itemName}"?`)) {
+    if (confirm(`Are you sure you want to delete "${itemName}"? This action cannot be undone.`)) {
         try {
             button.disabled = true;
             button.textContent = "Deleting...";
             
             await deleteProduct(itemId);
+            
+            // Also remove from all user carts
+            await removeFromAllUserCarts([itemId]);
             
             // Remove from selection if selected
             selectedItems.delete(itemId);
@@ -339,7 +426,7 @@ async function loadData() {
         itemsGrid.style.display = 'none';
         emptyState.style.display = 'none';
         
-        // Open database
+        // Open database (will connect to the same one as menuScript)
         await openDB();
         
         // Load products
@@ -351,7 +438,9 @@ async function loadData() {
         emptyState.style.display = 'block';
         emptyStateText.textContent = "Error loading items from database.";
         addItemLink.textContent = "Retry";
-        addItemLink.onclick = () => {
+        addItemLink.href = "#";
+        addItemLink.onclick = (e) => {
+            e.preventDefault();
             addItemLink.textContent = "Go to Add Items";
             addItemLink.href = "adminForm.html";
             loadData();

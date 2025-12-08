@@ -1,8 +1,9 @@
-// feedbackScript.js - Version 1 compatible
+// feedbackScript.js - Version 1 compatible (No name input + Character Counter)
 
 let db;
 let currentUser = null;
 let selectedRating = 0;
+const MAX_CHARS = 250;
 
 // Initialize the database (using version 1)
 function initDB() {
@@ -87,6 +88,178 @@ async function getCurrentUser() {
             resolve(currentUser);
         };
     });
+}
+
+// Display current user info
+function displayCurrentUserInfo() {
+    const userDisplay = document.querySelector('.current-user-display');
+    const userAvatar = document.querySelector('.current-user-avatar');
+    const userName = document.querySelector('.current-user-info h3');
+    const userStatus = document.querySelector('.current-user-info p');
+    
+    if (!currentUser || !currentUser.username) {
+        currentUser = {
+            username: "Guest",
+            isGuest: true
+        };
+    }
+    
+    // Set user initials for avatar
+    const initials = currentUser.username.charAt(0).toUpperCase();
+    userAvatar.textContent = initials;
+    
+    // Set username
+    userName.textContent = currentUser.username;
+    
+    // Set status
+    if (currentUser.isGuest || currentUser.username === "Guest" || currentUser.username === "guest") {
+        userStatus.textContent = "Guest User";
+        userStatus.style.color = "#ffc107";
+        
+        // Show guest warning
+        const guestWarning = document.querySelector('.guest-warning');
+        if (guestWarning) {
+            guestWarning.style.display = 'flex';
+        }
+        
+        // Disable submit button for guests
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.title = "Please log in to submit a review";
+        }
+    } else {
+        userStatus.textContent = "Logged In User";
+        userStatus.style.color = "#4CAF50";
+        
+        // Hide guest warning
+        const guestWarning = document.querySelector('.guest-warning');
+        if (guestWarning) {
+            guestWarning.style.display = 'none';
+        }
+        
+        // Enable submit button
+        const submitBtn = document.querySelector('.submit-btn');
+        if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.title = "Submit your review";
+        }
+    }
+}
+
+// Initialize character counter
+function initCharCounter() {
+    const textarea = document.getElementById('reviewText');
+    const charCounter = document.querySelector('.char-counter');
+    
+    if (!textarea || !charCounter) {
+        console.error("Textarea or character counter not found");
+        return;
+    }
+    
+    // Set max length attribute
+    textarea.maxLength = MAX_CHARS;
+    
+    // Update counter on input
+    textarea.addEventListener('input', updateCharCounter);
+    
+    // Update counter on page load (in case there's existing text)
+    updateCharCounter();
+    
+    // Prevent paste that exceeds limit
+    textarea.addEventListener('paste', (e) => {
+        const pastedText = e.clipboardData.getData('text');
+        const currentText = textarea.value;
+        const selectionStart = textarea.selectionStart;
+        const selectionEnd = textarea.selectionEnd;
+        
+        // Calculate new text length
+        const newText = currentText.substring(0, selectionStart) + 
+                       pastedText + 
+                       currentText.substring(selectionEnd);
+        
+        if (newText.length > MAX_CHARS) {
+            e.preventDefault();
+            
+            // Calculate how much we can paste
+            const allowedLength = MAX_CHARS - (currentText.length - (selectionEnd - selectionStart));
+            const truncatedPaste = pastedText.substring(0, allowedLength);
+            
+            // Insert truncated text
+            textarea.value = currentText.substring(0, selectionStart) + 
+                           truncatedPaste + 
+                           currentText.substring(selectionEnd);
+            
+            // Update cursor position
+            const newCursorPos = selectionStart + truncatedPaste.length;
+            textarea.setSelectionRange(newCursorPos, newCursorPos);
+            
+            // Update counter
+            updateCharCounter();
+            
+            // Show warning
+            showCharLimitWarning();
+        }
+    });
+    
+    // Prevent typing beyond limit
+    textarea.addEventListener('keydown', (e) => {
+        if (textarea.value.length >= MAX_CHARS && 
+            !isControlKey(e.key) && 
+            !e.ctrlKey && 
+            !e.metaKey) {
+            e.preventDefault();
+            showCharLimitWarning();
+        }
+    });
+}
+
+// Update character counter display
+function updateCharCounter() {
+    const textarea = document.getElementById('reviewText');
+    const charCounter = document.querySelector('.char-counter');
+    
+    if (!textarea || !charCounter) return;
+    
+    const currentLength = textarea.value.length;
+    const remaining = MAX_CHARS - currentLength;
+    
+    // Update counter text
+    charCounter.textContent = `${currentLength}/${MAX_CHARS}`;
+    
+    // Update counter styling based on remaining characters
+    charCounter.classList.remove('near-limit', 'at-limit');
+    
+    if (remaining <= 0) {
+        charCounter.classList.add('at-limit');
+    } else if (remaining <= 50) {
+        charCounter.classList.add('near-limit');
+    }
+}
+
+// Check if key is a control key
+function isControlKey(key) {
+    const controlKeys = [
+        'Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 
+        'ArrowUp', 'ArrowDown', 'Tab', 'Escape', 'Enter'
+    ];
+    return controlKeys.includes(key);
+}
+
+// Show character limit warning
+function showCharLimitWarning() {
+    const charCounter = document.querySelector('.char-counter');
+    if (!charCounter) return;
+    
+    // Add warning animation
+    charCounter.classList.add('at-limit');
+    
+    // Remove animation after 1 second
+    setTimeout(() => {
+        if (document.getElementById('reviewText').value.length < MAX_CHARS) {
+            charCounter.classList.remove('at-limit');
+        }
+    }, 1000);
 }
 
 // Initialize reviews storage (fallback if store doesn't exist)
@@ -250,6 +423,12 @@ function initStarRating() {
     
     stars.forEach((star, index) => {
         star.addEventListener('click', () => {
+            // Check if user is guest
+            if (currentUser.isGuest || currentUser.username === "Guest" || currentUser.username === "guest") {
+                alert("Please log in to submit a review");
+                return;
+            }
+            
             selectedRating = index + 1;
             
             // Update star display
@@ -289,17 +468,17 @@ function initStarRating() {
 async function submitReview(event) {
     event.preventDefault();
     
-    const username = document.getElementById('reviewerName').value.trim();
+    // Check if user is guest
+    if (currentUser.isGuest || currentUser.username === "Guest" || currentUser.username === "guest") {
+        alert("Please log in to submit a review");
+        return;
+    }
+    
     const reviewText = document.getElementById('reviewText').value.trim();
     
     // Validation
     if (selectedRating === 0) {
         alert('Please select a star rating');
-        return;
-    }
-    
-    if (!username) {
-        alert('Please enter your name');
         return;
     }
     
@@ -313,13 +492,19 @@ async function submitReview(event) {
         return;
     }
     
-    // Create review object
+    if (reviewText.length > MAX_CHARS) {
+        alert(`Review must be ${MAX_CHARS} characters or less`);
+        return;
+    }
+    
+    // Create review object with current user's username
     const review = {
-        username: username,
+        username: currentUser.username,
         rating: selectedRating,
         reviewText: reviewText,
         timestamp: new Date().toISOString(),
-        dateDisplay: formatDate(new Date())
+        dateDisplay: formatDate(new Date()),
+        isGuest: false
     };
     
     try {
@@ -425,7 +610,6 @@ function showSuccessMessage() {
 // Reset form after submission
 function resetForm() {
     selectedRating = 0;
-    document.getElementById('reviewerName').value = '';
     document.getElementById('reviewText').value = '';
     
     // Reset stars
@@ -434,13 +618,13 @@ function resetForm() {
         star.innerHTML = '☆';
     });
     
-    // Auto-fill username if user is logged in and not guest
-    if (currentUser && currentUser.username && 
-        currentUser.username !== "Guest" && 
-        currentUser.username !== "guest") {
-        document.getElementById('reviewerName').value = currentUser.username;
-        document.getElementById('reviewerName').readOnly = true;
-    }
+    // Update character counter
+    updateCharCounter();
+}
+
+// Redirect to login page
+function redirectToLogin() {
+    window.location.href = 'sign.html';
 }
 
 // Initialize the page
@@ -455,22 +639,26 @@ async function initPage() {
         // Get current user
         await getCurrentUser();
         
+        // Display current user info
+        displayCurrentUserInfo();
+        
         // Initialize star rating
         initStarRating();
+        
+        // Initialize character counter
+        initCharCounter();
         
         // Load existing reviews
         await loadReviews();
         
-        // Auto-fill username if user is logged in
-        if (currentUser && currentUser.username && 
-            currentUser.username !== "Guest" && 
-            currentUser.username !== "guest") {
-            document.getElementById('reviewerName').value = currentUser.username;
-            document.getElementById('reviewerName').readOnly = true;
-        }
-        
         // Set up form submission
         document.getElementById('reviewForm').addEventListener('submit', submitReview);
+        
+        // Set up login redirect for guest warning
+        const loginLink = document.querySelector('.guest-warning a');
+        if (loginLink) {
+            loginLink.addEventListener('click', redirectToLogin);
+        }
         
         console.log("Feedback page initialized successfully");
         
@@ -482,11 +670,20 @@ async function initPage() {
         // Initialize star rating anyway
         initStarRating();
         
+        // Initialize character counter anyway
+        initCharCounter();
+        
         // Try to load from localStorage
         loadReviews();
         
         // Set up form submission with localStorage fallback
         document.getElementById('reviewForm').addEventListener('submit', submitReview);
+        
+        // Set up login redirect
+        const loginLink = document.querySelector('.guest-warning a');
+        if (loginLink) {
+            loginLink.addEventListener('click', redirectToLogin);
+        }
     }
 }
 
