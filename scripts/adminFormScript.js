@@ -196,74 +196,37 @@ function formatFileSize(bytes) {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
 }
 
-async function handleFormSubmit(e) {
-    e.preventDefault();
+function validateForm() {
+    const name = document.getElementById('itemName').value.trim();
+    const price = document.getElementById('itemPrice').value;
+    const type = document.getElementById('itemType').value;
     
-    // Check if database is initialized
-    if (!dbInitialized) {
-        try {
-            await initializeDatabase();
-            dbInitialized = true;
-        } catch (error) {
-            showMessage('Database not available. Please refresh the page.', 'error');
-            return;
-        }
+    // Clear previous messages
+    clearMessages();
+    
+    let isValid = true;
+    let errorMessages = [];
+    
+    if (!name) {
+        errorMessages.push('Item name is required');
+        isValid = false;
     }
     
-    // Validate form
-    if (!validateForm()) {
-        return;
+    if (!price || parseFloat(price) <= 0) {
+        errorMessages.push('Valid price is required');
+        isValid = false;
     }
     
-    // Show loading
-    showLoading(true);
-    
-    try {
-        // Get form values
-        const name = document.getElementById('itemName').value.trim();
-        const description = document.getElementById('itemDescription').value.trim();
-        const price = parseFloat(document.getElementById('itemPrice').value);
-        const type = document.getElementById('itemType').value;
-        
-        // Prepare product data - match the structure from menuScript.js
-        const productData = {
-            name: name,
-            description: description,
-            price: price,
-            foodType: type, // Changed from 'type' to 'foodType' to match menuScript
-            ingredients: [], // Empty array by default
-            keyText: generateKeyText(name), // Generate keyText like menuScript
-            createdAt: new Date().toISOString()
-        };
-        
-        // Handle image - store as data URL directly in product
-        if (currentImage.dataUrl) {
-            // Store image as data URL directly in the product
-            productData.image = currentImage.dataUrl;
-        } else {
-            // Use default image based on type
-            productData.image = getDefaultImageForType(type);
-        }
-        
-        // Save product to IndexedDB
-        const productId = await saveProduct(productData);
-        
-        // Show success message
-        showMessage(`Item "${productData.name}" added successfully!`, 'success');
-        
-        // Clear form
-        clearForm();
-        
-        // Reload recent items
-        await loadRecentItems();
-        
-    } catch (error) {
-        console.error('Error adding item:', error);
-        showMessage('Error adding item. Please try again.', 'error');
-    } finally {
-        // Hide loading
-        showLoading(false);
+    if (!type) {
+        errorMessages.push('Food type is required');
+        isValid = false;
     }
+    
+    if (errorMessages.length > 0) {
+        showMessage(errorMessages.join('<br>'), 'error');
+    }
+    
+    return isValid;
 }
 
 // Generate keyText function (similar to menuScript.js)
@@ -303,7 +266,6 @@ function generateKeyText(name, existingKeys = new Set()) {
     });
 }
 
-// Modified handleFormSubmit to use async keyText generation
 async function handleFormSubmit(e) {
     e.preventDefault();
     
@@ -375,39 +337,6 @@ async function handleFormSubmit(e) {
         // Hide loading
         showLoading(false);
     }
-}
-
-function validateForm() {
-    const name = document.getElementById('itemName').value.trim();
-    const price = document.getElementById('itemPrice').value;
-    const type = document.getElementById('itemType').value;
-    
-    // Clear previous messages
-    clearMessages();
-    
-    let isValid = true;
-    let errorMessages = [];
-    
-    if (!name) {
-        errorMessages.push('Item name is required');
-        isValid = false;
-    }
-    
-    if (!price || parseFloat(price) <= 0) {
-        errorMessages.push('Valid price is required');
-        isValid = false;
-    }
-    
-    if (!type) {
-        errorMessages.push('Food type is required');
-        isValid = false;
-    }
-    
-    if (errorMessages.length > 0) {
-        showMessage(errorMessages.join('<br>'), 'error');
-    }
-    
-    return isValid;
 }
 
 async function saveProduct(productData) {
@@ -605,35 +534,3 @@ function showLoading(show) {
         }
     }
 }
-
-// Add CSS for loading overlay
-const style = document.createElement('style');
-style.textContent = `
-    .loading-overlay {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.7);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-    
-    .loading-overlay .loading-spinner {
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #4A9DEC;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-    }
-    
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
-`;
-document.head.appendChild(style);

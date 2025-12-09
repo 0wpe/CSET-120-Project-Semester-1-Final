@@ -165,9 +165,22 @@ function generateKeyText(name, existingKeys = new Set()) {
 }
 
 function getImageForProduct(product) {
-    // Use product image if available
-    if (product.image && product.image.startsWith('assets/')) {
-        return product.image;
+    // Check if product has a valid image
+    if (product.image) {
+        // Check if it's a data URL (starts with 'data:')
+        if (product.image.startsWith('data:')) {
+            return product.image;
+        }
+        
+        // Check if it's a relative path (starts with 'assets/')
+        if (product.image.startsWith('assets/')) {
+            return product.image;
+        }
+        
+        // Check if it's a full URL
+        if (product.image.startsWith('http://') || product.image.startsWith('https://')) {
+            return product.image;
+        }
     }
     
     // Try to use default image based on foodType
@@ -327,7 +340,7 @@ async function loadProducts() {
             
             itemCard.innerHTML = `
                 <input type="checkbox" class="select-checkbox" data-id="${product.productId}">
-                <img src="${imageUrl}" alt="${product.name}" class="item-image" onerror="this.src='${getDefaultImage()}'">
+                <img src="${imageUrl}" alt="${product.name}" class="item-image" onerror="this.onerror=null;this.src='${getDefaultImage()}'">
                 <div class="item-details">
                     <div class="item-name">${product.name || 'Unnamed Item'}</div>
                     <div class="item-description">${product.description || 'No description available'}</div>
