@@ -1,3 +1,5 @@
+//added the time info
+
 // ===============================
 // OPEN DATABASE + INITIAL SETUP
 // ===============================
@@ -31,6 +33,10 @@ function openDB() {
             if (!upgradeDB.objectStoreNames.contains("createFirstMenuList")) {
                 upgradeDB.createObjectStore("createFirstMenuList", { keyPath: "runId" });
             }
+            if (!upgradeDB.objectStoreNames.contains("timer")) {
+                upgradeDB.createObjectStore("timer", { keyPath: "timeId"});
+            }
+
         };
 
         request.onsuccess = (event) => {
@@ -865,12 +871,42 @@ function displayAdminBtnFN(){
     });
 }
 
+function timeStart() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["timer"], "readwrite");
+        const store = tx.objectStore("timer");
+
+        const req = store.get(1);
+
+        req.onsuccess = () => {
+            const result = req.result;
+            resolve({store, result});
+        };
+        req.onerror = () => reject(req.error);
+    });
+}
+
 // ===============================
 // MARK FIRST RUN EXECUTION
 // ===============================
 openDB().then(() => {
     console.log("Database ready for first run setup");
     
+    timeStart().then(({store, result}) =>{
+        if (!result) {
+            const tx = db.transaction(["timer"], "readwrite");
+            const store = tx.objectStore("timer");
+
+            const req = store.add({currentTime: performance.now(), timeId: 1});
+
+            req.onsuccess = () => {console.log("Time added sucessfully")};
+            req.onerror = () => {console.log("Time addition error")};
+        } else {
+            console.log("timer already started");
+        }
+    }).catch(error => {
+        console.error("Error starting timer:", error);
+    })
     // Create admin account on startup
     createAdminOnStartup().then(() => {
         console.log("Admin initialization complete");

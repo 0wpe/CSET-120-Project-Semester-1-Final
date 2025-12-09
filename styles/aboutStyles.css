@@ -81,7 +81,7 @@ input[type="radio"] {
     --cards-container-size: calc(var(--radius) * 2);
     --cards-container-padding: 2rem;/* changed from 2.0 to 1.7 // 1.7 makes it cut off 2 looks right*/
     --border-color: var(--color-light);
-    --label-offset: calc(var(--radius) * -1 - 0.6rem);
+    --label-offset: calc(var(--radius) * -1 - 0.6rem); /* changed from 0.6 to 0.8*/ 
     --label-size: 30px;
     --label-color: var(--color-white);
     --label-color-hover: var(--color-light);

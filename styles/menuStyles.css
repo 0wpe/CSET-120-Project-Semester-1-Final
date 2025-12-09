@@ -491,9 +491,14 @@ header{
     padding-left: 10px;
     padding-right: 10px;
     display: grid;
+    overflow:scroll;
     /* grid-template-columns: repeat(2, 1fr); */
     gap: 25px;
     /* padding: 20px; */
+}
+
+.dropdown-content::-webkit-scrollbar{
+    display: none;
 }
 
 .division{

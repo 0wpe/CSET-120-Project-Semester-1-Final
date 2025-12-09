@@ -105,6 +105,78 @@ function getUserAccount(username) {
 }
 
 // ===============================
+// TRACK SESSION TIME (FROM WEBSITE ENTRY)
+// ===============================
+function initializeSessionTimer() {
+    // Get or create start time when user first enters website
+    let startTime = localStorage.getItem("websiteSessionStartTime");
+    
+    if (!startTime) {
+        startTime = new Date().toISOString();
+        localStorage.setItem("websiteSessionStartTime", startTime);
+        console.log("New website session started:", startTime);
+    } else {
+        console.log("Existing website session found:", startTime);
+    }
+    
+    return startTime;
+}
+
+// ===============================
+// CALCULATE SESSION DURATION (IN MINUTES)
+// ===============================
+function calculateSessionDuration() {
+    const startTimeStr = localStorage.getItem("websiteSessionStartTime");
+    if (!startTimeStr) return 0;
+    
+    const startTime = new Date(startTimeStr);
+    const endTime = new Date();
+    
+    // Calculate difference in milliseconds
+    const diffMs = endTime - startTime;
+    
+    // Convert to minutes (rounded to 2 decimal places)
+    const minutes = Math.round((diffMs / (1000 * 60)) * 100) / 100;
+    
+    return minutes;
+}
+
+// ===============================
+// UPDATE ELAPSED TIME DISPLAY
+// ===============================
+function updateElapsedTimeDisplay() {
+    const elapsedTimeElement = document.getElementById("elapsedTime");
+    if (!elapsedTimeElement) return;
+    
+    if (isNewOrder) {
+        // For new orders, show current session duration
+        const duration = calculateSessionDuration();
+        elapsedTimeElement.innerText = `${duration} minutes`;
+        
+        // Store duration in receipt for later use
+        if (currentReceipt) {
+            currentReceipt.sessionDuration = duration;
+            currentReceipt.sessionStartTime = localStorage.getItem("websiteSessionStartTime");
+        }
+    } else {
+        // For completed orders, show saved session duration
+        if (currentReceipt && currentReceipt.sessionDuration) {
+            elapsedTimeElement.innerText = `${currentReceipt.sessionDuration} minutes`;
+        } else {
+            elapsedTimeElement.innerText = "Just now";
+        }
+    }
+}
+
+// ===============================
+// RESET SESSION TIMER
+// ===============================
+function resetSessionTimer() {
+    localStorage.removeItem("websiteSessionStartTime");
+    console.log("Session timer reset");
+}
+
+// ===============================
 // LOAD AND DISPLAY RECEIPT
 // ===============================
 async function loadReceipt() {
@@ -112,6 +184,9 @@ async function loadReceipt() {
         await openDB();
         const currentUser = await getCurrentUser();
         const userAccount = await getUserAccount(currentUser.username);
+        
+        // Initialize session timer when page loads
+        initializeSessionTimer();
         
         const localStorageReceipt = localStorage.getItem("checkoutReceipt");
         
@@ -158,6 +233,9 @@ function displayReceiptInfo() {
     const date = isNewOrder ? new Date() : new Date(currentReceipt.date || currentReceipt.purchasedAt || new Date());
     document.getElementById("orderDate").innerText = date.toLocaleString();
     
+    // Update elapsed time display (will show "X minutes" or "Just now")
+    updateElapsedTimeDisplay();
+    
     // Items list
     const container = document.getElementById("itemsList");
     container.innerHTML = "";
@@ -177,35 +255,34 @@ function displayReceiptInfo() {
     
     // Totals
     // set base subtotal/tax text (updateTotals will handle tip & total)
-if (currentReceipt.subtotal != null) {
-    document.getElementById("r-subtotal").innerText = `$${currentReceipt.subtotal.toFixed(2)}`;
-}
-if (currentReceipt.tax != null) {
-    document.getElementById("r-tax").innerText = `$${currentReceipt.tax.toFixed(2)}`;
-}
+    if (currentReceipt.subtotal != null) {
+        document.getElementById("r-subtotal").innerText = `$${currentReceipt.subtotal.toFixed(2)}`;
+    }
+    if (currentReceipt.tax != null) {
+        document.getElementById("r-tax").innerText = `$${currentReceipt.tax.toFixed(2)}`;
+    }
 
-// If receipt already has saved tip info (from history), set radio/custom UI so updateTotals can show it
-if (currentReceipt.tipAmount != null) {
-    // prefer saved tipPercent if present
-    if (currentReceipt.tipPercent && currentReceipt.tipPercent !== 'custom') {
-        // programmatically check radio
-        const radio = document.querySelector(`input[name="tip"][value="${currentReceipt.tipPercent}"]`);
-        if (radio) radio.checked = true;
-    } else if (currentReceipt.tipPercent === 'custom' || currentReceipt.tipAmount > 0) {
-        // check custom and fill input
-        const radioCustom = document.querySelector('input[name="tip"][value="custom"]');
-        const customInput = document.getElementById('customTip');
-        if (radioCustom) radioCustom.checked = true;
-        if (customInput) {
-            customInput.style.display = '';
-            customInput.value = currentReceipt.tipAmount.toFixed(2);
+    // If receipt already has saved tip info (from history), set radio/custom UI so updateTotals can show it
+    if (currentReceipt.tipAmount != null) {
+        // prefer saved tipPercent if present
+        if (currentReceipt.tipPercent && currentReceipt.tipPercent !== 'custom') {
+            // programmatically check radio
+            const radio = document.querySelector(`input[name="tip"][value="${currentReceipt.tipPercent}"]`);
+            if (radio) radio.checked = true;
+        } else if (currentReceipt.tipPercent === 'custom' || currentReceipt.tipAmount > 0) {
+            // check custom and fill input
+            const radioCustom = document.querySelector('input[name="tip"][value="custom"]');
+            const customInput = document.getElementById('customTip');
+            if (radioCustom) radioCustom.checked = true;
+            if (customInput) {
+                customInput.style.display = '';
+                customInput.value = currentReceipt.tipAmount.toFixed(2);
+            }
         }
     }
-}
 
-// Recalculate tip & total (will also update r-total and r-tip)
-updateTotals();
-
+    // Recalculate tip & total (will also update r-total and r-tip)
+    updateTotals();
     
     // Render customer details section
     if (isNewOrder) {
@@ -468,9 +545,36 @@ function setupEventListeners() {
     // Back button click handler
     if (backBtn) {
         backBtn.addEventListener("click", () => {
+            resetTimer().then(() =>{
+                const tx = db.transaction(["timer"], "readwrite");
+                const store = tx.objectStore("timer");
+
+                const req = store.put({currentTime: performance.now(), timeId: 1});
+
+                req.onsuccess = () => {
+                    console.log("Successful timer reset");
+                    
+                };
+                req.onerror = () => {};
+            });
             window.location.href = "index.html";
         });
     }
+}
+
+function resetTimer() {
+    return new Promise((resolve, reject) => {
+        const tx = db.transaction(["timer"], "readwrite");
+        const store = tx.objectStore("timer");
+
+        const req = store.get(1);
+
+        req.onsuccess = () => {
+            const result = req.result;
+            resolve();
+        };
+        req.onerror = () => reject();
+    });
 }
 
 // ===============================
@@ -636,6 +740,10 @@ async function handlePurchase() {
     }
     
     try {
+        // Calculate final session duration
+        const sessionDuration = calculateSessionDuration();
+        console.log("Final session duration:", sessionDuration, "minutes");
+        
         // Get form values
         const name = document.getElementById("orderName").value.trim();
         const paymentType = document.getElementById("paymentType").value;
@@ -645,6 +753,11 @@ async function handlePurchase() {
         currentReceipt.paymentType = paymentType;
         currentReceipt.purchased = true;
         currentReceipt.purchasedAt = new Date().toISOString();
+        
+        // Add session time to receipt
+        currentReceipt.sessionDuration = sessionDuration;
+        currentReceipt.sessionStartTime = localStorage.getItem("websiteSessionStartTime");
+        currentReceipt.sessionEndTime = new Date().toISOString();
         
         // Add card details if applicable
         if (paymentType === "Credit Card" || paymentType === "Debit Card") {
@@ -664,6 +777,9 @@ async function handlePurchase() {
         // Update localStorage with purchased receipt
         localStorage.setItem("checkoutReceipt", JSON.stringify(currentReceipt));
         
+        // Reset session timer for next session
+        resetSessionTimer();
+        
         // Show success message
         const successMessage = document.getElementById("successMessage");
         if (successMessage) {
@@ -680,7 +796,10 @@ async function handlePurchase() {
         // Show completed state
         renderSavedDetails();
         
-        // Show alert
+        // Update elapsed time display to show the final duration
+        updateElapsedTimeDisplay();
+        
+        // Show original alert (kept as is)
         alert("Purchase completed successfully! You can now print your receipt.");
         
     } catch (error) {
