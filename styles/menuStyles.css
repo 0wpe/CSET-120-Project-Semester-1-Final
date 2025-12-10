@@ -47,9 +47,13 @@ header{
     height:84vh;
     border-right:25px solid black;
     border-left:25px solid black;
-    
+    overflow:scroll;
     /* background:rgb(250, 250, 250); */
     /* border-radius:30px; */
+}
+
+.section-sides::-webkit-scrollbar{
+    display: none;
 }
 
 .inner{
@@ -498,6 +502,14 @@ header{
 }
 
 .dropdown-content::-webkit-scrollbar{
+    display: none;
+}
+
+.test{
+    overflow:scroll;
+}
+
+.test::-webkit-scrollbar{
     display: none;
 }
 

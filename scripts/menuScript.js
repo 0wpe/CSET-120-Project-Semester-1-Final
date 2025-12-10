@@ -177,7 +177,76 @@ const rawItems = [
     { name: "Chicken Tenders & Fries", image:"assets/imgs/initialItemImgs/chickenTender.jpg", price: 8.99, description: "Crispy chicken tenders with a side of fries.", ingredients: [{name: "Chicken", type: "meat"}, {name: "Batter", type: "grain"}, {name: "Potatoes", type: "vegetable"}, {name: "Oil", type: "fat"}], foodType: "Kids Menu" },
     { name: "Cheeseburger & Fries", image:"assets/imgs/initialItemImgs/cheeseBurger.jpg", price: 9.49, description: "Mini cheeseburger served with crispy fries.", ingredients: [{name: "Beef", type: "meat"}, {name: "Cheese", type: "dairy"}, {name: "Bun", type: "grain"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
     { name: "Mini-Pizza & Fries", image:"assets/imgs/initialItemImgs/miniPizzapg.jpg", price: 8.49, description: "Small cheese pizza with a side of fries.", ingredients: [{name: "Dough", type: "grain"}, {name: "Cheese", type: "dairy"}, {name: "Tomato Sauce", type: "sauce"}, {name: "Potatoes", type: "vegetable"}], foodType: "Kids Menu" },
-    { name: "Macaroni & One Side", image:"assets/imgs/initialItemImgs/macaroni.jpg", price: 7.99, description: "Creamy macaroni pasta served with your choice of side.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese Sauce", type: "sauce"}], foodType: "Kids Menu" }
+    { name:"Macaroni & One Side", image:"assets/imgs/initialItemImgs/macaroni.jpg", price: 7.99, description: "Creamy macaroni pasta served with your choice of side.", ingredients: [{name: "Pasta", type: "grain"}, {name: "Cheese Sauce", type: "sauce"}], foodType: "Kids Menu" },
+    
+    
+    { name:"Iced Cola", image:"assets/imgs/initialItemImgs/item01.jpg", price:2.49, description:"Chilled cola served over ice.", ingredients:[{name:"Cola Syrup",type:"beverage"},{name:"Carbonated Water",type:"beverage"}], foodType:"Cold" },
+    { name:"Cold Brew Coffee", image:"assets/imgs/initialItemImgs/item02.jpg", price:3.29, description:"Slow-steeped cold brew coffee.", ingredients:[{name:"Coffee Beans",type:"beverage"},{name:"Water",type:"beverage"}], foodType:"Cold" },
+    { name:"Sparkling Water", image:"assets/imgs/initialItemImgs/item03.jpg", price:1.99, description:"Refreshing sparkling mineral water.", ingredients:[{name:"Carbonated Water",type:"beverage"}], foodType:"Cold" },
+
+    { name:"Hot Coffee", image:"assets/imgs/initialItemImgs/item04.jpg", price:2.49, description:"Freshly brewed hot coffee.", ingredients:[{name:"Coffee Beans",type:"beverage"},{name:"Water",type:"beverage"}], foodType:"Hot" },
+    { name:"Hot Green Tea", image:"assets/imgs/initialItemImgs/item05.jpg", price:2.29, description:"Steamed green tea served hot.", ingredients:[{name:"Tea Leaves",type:"beverage"},{name:"Water",type:"beverage"}], foodType:"Hot" },
+    { name:"Hot Apple Cider", image:"assets/imgs/initialItemImgs/item06.jpg", price:3.29, description:"Warm spiced apple cider.", ingredients:[{name:"Apple",type:"fruit"},{name:"Cinnamon",type:"spice"}], foodType:"Hot" },
+
+    { name:"Garlic Bread Bites", image:"assets/imgs/initialItemImgs/item07.jpg", price:4.49, description:"Toasted garlic bread pieces.", ingredients:[{name:"Bread",type:"grain"},{name:"Garlic",type:"vegetable"}], foodType:"Starter" },
+    { name:"Mozzarella Sticks", image:"assets/imgs/initialItemImgs/item08.jpg", price:5.49, description:"Crispy fried mozzarella sticks.", ingredients:[{name:"Mozzarella",type:"dairy"},{name:"Bread Crumbs",type:"grain"}], foodType:"Starter" },
+    { name:"Onion Rings", image:"assets/imgs/initialItemImgs/item09.jpg", price:4.99, description:"Golden fried onion rings.", ingredients:[{name:"Onion",type:"vegetable"},{name:"Batter",type:"grain"}], foodType:"Starter" },
+
+    { name:"Tomato Soup", image:"assets/imgs/initialItemImgs/item10.jpg", price:3.99, description:"Creamy tomato soup.", ingredients:[{name:"Tomatoes",type:"vegetable"},{name:"Cream",type:"dairy"}], foodType:"Soup" },
+    { name:"Chicken Noodle Soup", image:"assets/imgs/initialItemImgs/item11.jpg", price:4.49, description:"Classic chicken noodle soup.", ingredients:[{name:"Chicken",type:"meat"},{name:"Noodles",type:"grain"}], foodType:"Soup" },
+    { name:"Vegetable Soup", image:"assets/imgs/initialItemImgs/item12.jpg", price:4.29, description:"Warm mixed vegetable soup.", ingredients:[{name:"Carrots",type:"vegetable"},{name:"Celery",type:"vegetable"}], foodType:"Soup" },
+
+    { name:"Spaghetti Marinara", image:"assets/imgs/initialItemImgs/item13.jpg", price:8.99, description:"Spaghetti with marinara sauce.", ingredients:[{name:"Pasta",type:"grain"},{name:"Tomato Sauce",type:"sauce"}], foodType:"Pasta" },
+    { name:"Alfredo Fettucine", image:"assets/imgs/initialItemImgs/item14.jpg", price:9.49, description:"Fettuccine tossed in alfredo sauce.", ingredients:[{name:"Pasta",type:"grain"},{name:"Cream",type:"dairy"}], foodType:"Pasta" },
+    { name:"Pesto Penne", image:"assets/imgs/initialItemImgs/item15.jpg", price:9.29, description:"Penne in fresh basil pesto.", ingredients:[{name:"Pasta",type:"grain"},{name:"Basil",type:"herb"}], foodType:"Pasta" },
+
+    { name:"Classic Cheeseburger", image:"assets/imgs/initialItemImgs/item16.jpg", price:7.99, description:"Beef patty with cheese and lettuce.", ingredients:[{name:"Beef",type:"meat"},{name:"Cheese",type:"dairy"}], foodType:"Burger" },
+    { name:"Bacon Burger", image:"assets/imgs/initialItemImgs/item17.jpg", price:8.49, description:"Beef burger topped with bacon.", ingredients:[{name:"Beef",type:"meat"},{name:"Bacon",type:"meat"}], foodType:"Burger" },
+    { name:"Mushroom Swiss Burger", image:"assets/imgs/initialItemImgs/item18.jpg", price:8.99, description:"Beef burger with mushrooms and Swiss.", ingredients:[{name:"Beef",type:"meat"},{name:"Mushrooms",type:"vegetable"}], foodType:"Burger" },
+
+    { name:"Grilled Chicken Plate", image:"assets/imgs/initialItemImgs/item19.jpg", price:9.49, description:"Seasoned grilled chicken breast.", ingredients:[{name:"Chicken",type:"meat"}], foodType:"Chicken" },
+    { name:"Crispy Chicken Tenders", image:"assets/imgs/initialItemImgs/item20.jpg", price:7.99, description:"Breaded fried chicken strips.", ingredients:[{name:"Chicken",type:"meat"},{name:"Breading",type:"grain"}], foodType:"Chicken" },
+    { name:"Honey BBQ Chicken", image:"assets/imgs/initialItemImgs/item21.jpg", price:9.99, description:"Chicken glazed with honey BBQ sauce.", ingredients:[{name:"Chicken",type:"meat"},{name:"BBQ Sauce",type:"sauce"}], foodType:"Chicken" },
+
+    { name:"Beef Stir Fry", image:"assets/imgs/initialItemImgs/item22.jpg", price:10.49, description:"Beef with vegetables in stir fry sauce.", ingredients:[{name:"Beef",type:"meat"},{name:"Peppers",type:"vegetable"}], foodType:"Beef" },
+    { name:"Beef Stew", image:"assets/imgs/initialItemImgs/item23.jpg", price:8.99, description:"Hearty beef and veggie stew.", ingredients:[{name:"Beef",type:"meat"},{name:"Potatoes",type:"vegetable"}], foodType:"Beef" },
+    { name:"Grilled Steak", image:"assets/imgs/initialItemImgs/item24.jpg", price:13.99, description:"Seasoned grilled steak.", ingredients:[{name:"Beef",type:"meat"}], foodType:"Beef" },
+
+    { name:"Grilled Salmon", image:"assets/imgs/initialItemImgs/item25.jpg", price:12.99, description:"Grilled salmon fillet.", ingredients:[{name:"Salmon",type:"seafood"}], foodType:"Seafood" },
+    { name:"Fried Shrimp Basket", image:"assets/imgs/initialItemImgs/item26.jpg", price:11.49, description:"Crispy fried shrimp.", ingredients:[{name:"Shrimp",type:"seafood"},{name:"Batter",type:"grain"}], foodType:"Seafood" },
+    { name:"Fish Tacos", image:"assets/imgs/initialItemImgs/item27.jpg", price:10.49, description:"Seasoned fish in soft tortillas.", ingredients:[{name:"Fish",type:"seafood"},{name:"Tortilla",type:"grain"}], foodType:"Seafood" },
+
+    { name:"Mashed Potatoes", image:"assets/imgs/initialItemImgs/item28.jpg", price:3.49, description:"Creamy mashed potatoes.", ingredients:[{name:"Potatoes",type:"vegetable"},{name:"Butter",type:"dairy"}], foodType:"Potatoe" },
+    { name:"Baked Potato", image:"assets/imgs/initialItemImgs/item29.jpg", price:3.99, description:"Oven-baked potato with butter.", ingredients:[{name:"Potato",type:"vegetable"}], foodType:"Potatoe" },
+    { name:"Potato Wedges", image:"assets/imgs/initialItemImgs/item30.jpg", price:4.49, description:"Seasoned crispy potato wedges.", ingredients:[{name:"Potatoes",type:"vegetable"}], foodType:"Potatoe" },
+
+    // { name:"Steamed Broccoli", image:"assets/imgs/initialItemImgs/item31.jpg", price:3.49, description:"Fresh steamed broccoli.", ingredients:[{name:"Broccoli",type:"vegetable"}], foodType:"Vegetable" },
+    { name:"Grilled Asparagus", image:"assets/imgs/initialItemImgs/item32.jpg", price:3.99, description:"Lightly grilled asparagus.", ingredients:[{name:"Asparagus",type:"vegetable"}], foodType:"Vegetable" },
+    { name:"Sautéed Spinach", image:"assets/imgs/initialItemImgs/item33.jpg", price:3.79, description:"Spinach sautéed with garlic.", ingredients:[{name:"Spinach",type:"vegetable"}], foodType:"Vegetable" },
+
+    { name:"Dinner Roll", image:"assets/imgs/initialItemImgs/item34.jpg", price:1.49, description:"Soft, warm dinner roll.", ingredients:[{name:"Flour",type:"grain"}], foodType:"Bread" },
+    { name:"Garlic Loaf Slice", image:"assets/imgs/initialItemImgs/item35.jpg", price:2.49, description:"Toasted garlic loaf slice.", ingredients:[{name:"Bread",type:"grain"},{name:"Garlic",type:"vegetable"}], foodType:"Bread" },
+    { name:"Butter Croissant", image:"assets/imgs/initialItemImgs/item36.jpg", price:2.99, description:"Flaky buttery croissant.", ingredients:[{name:"Flour",type:"grain"},{name:"Butter",type:"dairy"}], foodType:"Bread" },
+
+    { name:"House Salad", image:"assets/imgs/initialItemImgs/item37.jpg", price:4.99, description:"Mixed greens with vinaigrette.", ingredients:[{name:"Lettuce",type:"vegetable"},{name:"Tomato",type:"vegetable"}], foodType:"Salad" },
+    // { name:"Caesar Salad", image:"assets/imgs/initialItemImgs/item38.jpg", price:5.49, description:"Crisp romaine with Caesar dressing.", ingredients:[{name:"Lettuce",type:"vegetable"},{name:"Croutons",type:"grain"}], foodType:"Salad" },
+    { name:"Chicken Salad", image:"assets/imgs/initialItemImgs/item39.jpg", price:6.99, description:"Salad topped with grilled chicken.", ingredients:[{name:"Chicken",type:"meat"},{name:"Lettuce",type:"vegetable"}], foodType:"Salad" },
+
+    { name:"Vanilla Cake", image:"assets/imgs/initialItemImgs/item40.jpg", price:4.49, description:"Classic vanilla layer cake.", ingredients:[{name:"Flour",type:"grain"},{name:"Sugar",type:"sweetener"}], foodType:"Cake" },
+    { name:"Chocolate Cake", image:"assets/imgs/initialItemImgs/item41.jpg", price:4.79, description:"Rich chocolate cake slice.", ingredients:[{name:"Cocoa",type:"sweet"},{name:"Flour",type:"grain"}], foodType:"Cake" },
+    { name:"Lemon Cake", image:"assets/imgs/initialItemImgs/item42.jpg", price:4.59, description:"Bright lemon-flavored cake.", ingredients:[{name:"Lemon",type:"fruit"}], foodType:"Cake" },
+
+    { name:"Apple Pie Slice", image:"assets/imgs/initialItemImgs/item43.jpg", price:4.29, description:"Warm apple pie slice.", ingredients:[{name:"Apples",type:"fruit"},{name:"Crust",type:"grain"}], foodType:"Pie" },
+    { name:"Cherry Pie Slice", image:"assets/imgs/initialItemImgs/item44.jpg", price:4.49, description:"Sweet cherry pie slice.", ingredients:[{name:"Cherries",type:"fruit"}], foodType:"Pie" },
+    { name:"Blueberry Pie Slice", image:"assets/imgs/initialItemImgs/item45.jpg", price:4.59, description:"Fresh blueberry pie slice.", ingredients:[{name:"Blueberries",type:"fruit"}], foodType:"Pie" },
+
+    { name:"Vanilla Ice Cream Cup", image:"assets/imgs/initialItemImgs/item46.jpg", price:2.99, description:"Frozen vanilla dessert cup.", ingredients:[{name:"Milk",type:"dairy"},{name:"Sugar",type:"sweetener"}], foodType:"Frozen" },
+    { name:"Strawberry Ice Pop", image:"assets/imgs/initialItemImgs/item47.jpg", price:1.99, description:"Frozen strawberry pop.", ingredients:[{name:"Strawberry",type:"fruit"}], foodType:"Frozen" },
+    { name:"Chocolate Ice Cream Cup", image:"assets/imgs/initialItemImgs/item48.jpg", price:2.99, description:"Frozen chocolate dessert cup.", ingredients:[{name:"Cocoa",type:"sweet"}], foodType:"Frozen" },
+
+    { name:"Kids Chicken Nuggets", image:"assets/imgs/initialItemImgs/item49.jpg", price:6.49, description:"Crispy chicken nuggets for kids.", ingredients:[{name:"Chicken",type:"meat"}], foodType:"Kids Menu" },
+    { name:"Kids Mini Burger", image:"assets/imgs/initialItemImgs/item50.jpg", price:6.99, description:"Small beef burger with fries.", ingredients:[{name:"Beef",type:"meat"},{name:"Bun",type:"grain"}], foodType:"Kids Menu" },
+    // { name:"Macaroni & One Side", image:"assets/imgs/initialItemImgs/item51.jpg", price:7.99, description:"Creamy macaroni with a side.", ingredients:[{name:"Pasta",type:"grain"},{name:"Cheese Sauce",type:"sauce"}], foodType:"Kids Menu" }    
 ];
 
 // ===============================
