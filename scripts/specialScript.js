@@ -51,35 +51,35 @@ const specialsData = [
                 name: "Summer Salad",
                 description: "Mixed greens with watermelon, feta, and balsamic.",
                 price: "$7.49",
-                imageUrl: "../assets/imgs/miniSalad.png",
+                imageUrl: "assets/imgs/specialImgs/miniSalad.jpg",
                 tags: ["Greens", "Watermelon", "Feta", "Balsamic"]
             },
             {
                 name: "Melon Sorbet",
                 description: "Light, refreshing melon sorbet dessert.",
                 price: "$3.99",
-                imageUrl: "../assets/imgs/sorbet.jpg",
+                imageUrl: "assets/imgs/specialImgs/sorbet.jpg",
                 tags: ["Dessert", "Light", "Refreshing"]
             },
             {
                 name: "Bread Rolls",
                 description: "Warm, freshly baked bread rolls with butter.",
                 price: "$5.99",
-                imageUrl: "../assets/imgs/breadRoll.jpg",
+                imageUrl: "assets/imgs/specialImgs/breadRoll.jpg",
                 tags: ["Appetizer", "Bread", "Butter"]
             },
             {
                 name: "Mozzarella Sticks",
                 description: "Golden fried mozzarella sticks with marinara sauce.",
                 price: "$8.49",
-                imageUrl: "../assets/imgs/mozzarellaSticks.jpg",
+                imageUrl: "assets/imgs/specialImgs/mozzarellaSticks.jpg",
                 tags: ["Appetizer", "Fried", "Cheese"]
             },
             {
                 name: "Toasted Ravioli",
                 description: "Crispy toasted ravioli served with marinara.",
                 price: "$9.99",
-                imageUrl: "../assets/imgs/toastedRavioli.jpg",
+                imageUrl: "assets/imgs/specialImgs/toastedRavioli.jpg",
                 tags: ["Appetizer", "Toasted", "Pasta"]
             }
         ];
